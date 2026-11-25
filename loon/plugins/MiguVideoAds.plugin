@@ -1,0 +1,33 @@
+#!name=咪咕视频去广告
+#!desc=移除咪咕视频开屏广告、贴片广告、首页推荐推广及活动模块，精简个人中心。
+#!openUrl=https://apps.apple.com/app/id787130974
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/52/fe/d5/52fed568-df96-4664-62a6-2e68181564bb/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/144x144bb.png
+
+[Rewrite]
+# 贴片广告素材（返回 1px 图，避免播放器因缺图报错）
+request if ${url} ~= /^https?:\/\/ggc\.miguvideo\.com\/v\d\/iflyad\/deliverysystem\/direct\//i then reject_img(200)
+request if ${url} ~= /^https?:\/\/ggic\d+\.miguvideo\.com\/ad\//i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/public-deliver\d*\.miguvideo\.com\/deliver\/site\/batchMatch\/mergeSpot\/miguvideo\//i then reject_dict(200)
+
+# 首页推荐流里的广告合并位
+request if ${url} ~= /^https?:\/\/recommend-dy\.miguvideo\.com\/recommend-dynamic\/dataSource\/v\d\/recommend\/merge/i then reject_dict(200)
+
+# 分享图配置（带推广水印）
+request if ${url} ~= /^https?:\/\/app-sc\.miguvideo\.com\/app-management\/v\d\/staticcache\/settings\/miguvideo\/SHARE_PIC/i then reject_dict(200)
+
+# 活动列表
+request if ${url} ~= /^https?:\/\/common-sc\.miguvideo\.com\/videoActivity\/activityList\//i then reject_dict(200)
+
+# 广告 SDK 直连请求：上游写作 ggx*.miguvideo.com，具体主机名无法确证，因此不收
+
+# 个人中心的推荐模块（按条目剔除，不整条拒绝）
+
+[Script]
+response if ${url} ~= /^https?:\/\/display-sc\.miguvideo\.com\/display\/v3\/static\/PERSONAL_CENTER$/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-miguvideo_ads.js") with requires_body=true
+
+[MITM]
+hostname = ggc.miguvideo.com, ggic0.miguvideo.com, ggic1.miguvideo.com, ggic2.miguvideo.com, public-deliver9.miguvideo.com, recommend-dy.miguvideo.com, app-sc.miguvideo.com, common-sc.miguvideo.com, display-sc.miguvideo.com

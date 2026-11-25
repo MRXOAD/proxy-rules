@@ -1,0 +1,32 @@
+# Smart Home Real IP 分流规则（mihomo classical 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Smart Home Real IP
+# TOTAL: 27
+payload:
+  - DOMAIN-SUFFIX,aaplimg.com
+  - DOMAIN-SUFFIX,apple-cloudkit.com
+  - DOMAIN-SUFFIX,apple-dns.net
+  - DOMAIN-SUFFIX,apple-mapkit.com
+  - DOMAIN-SUFFIX,apple.com
+  - DOMAIN-SUFFIX,apzones.com
+  - DOMAIN-SUFFIX,aqara.cn
+  - DOMAIN-SUFFIX,aqara.com
+  - DOMAIN-SUFFIX,cdn-apple.com
+  - DOMAIN-SUFFIX,home.arpa
+  - DOMAIN-SUFFIX,icloud-content.com
+  - DOMAIN-SUFFIX,icloud.com
+  - DOMAIN-SUFFIX,is.autonavi.com
+  - DOMAIN-SUFFIX,local
+  - DOMAIN-SUFFIX,lumi-home.com
+  - DOMAIN-SUFFIX,lumiunited.com
+  - DOMAIN-SUFFIX,mi-idc.com
+  - DOMAIN-SUFFIX,mi-img.com
+  - DOMAIN-SUFFIX,mi.com
+  - DOMAIN-SUFFIX,micloud.com
+  - DOMAIN-SUFFIX,mijia.tech
+  - DOMAIN-SUFFIX,miot-spec.org
+  - DOMAIN-SUFFIX,miui.com
+  - DOMAIN-SUFFIX,miwifi.com
+  - DOMAIN-SUFFIX,xiaoai.com
+  - DOMAIN-SUFFIX,xiaomi.com
+  - DOMAIN-SUFFIX,xiaomi.net

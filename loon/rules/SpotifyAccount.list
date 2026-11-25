@@ -1,0 +1,9 @@
+# Spotify 账号与接口（固定地区顺序） 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD local Spotify account
+# TOTAL: 3
+# 用途与范围：Spotify 账户与业务接口；与音频/图片 CDN 分开。
+
+DOMAIN-SUFFIX,spoti.fi
+DOMAIN-SUFFIX,spotify.com
+DOMAIN-SUFFIX,spotify.link

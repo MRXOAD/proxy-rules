@@ -1,0 +1,22 @@
+#!name=东方财富去广告
+#!desc=移除东方财富开屏广告及资讯页推广广告。
+#!openUrl=https://apps.apple.com/app/id371147479
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9a/f2/10/9af21057-23de-5a07-8a15-af7d9fb1574e/AppIcon-0-0-1x_U007ephone-0-11-0-sRGB-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 开屏广告（Choice 数据终端）
+request if ${url} ~= /^https?:\/\/choicegw2\.eastmoney\.com\/ads\/userauth\/api\/Ad\/GetLaunchAd/i then reject(404)
+
+# 资讯页广告服务
+request if ${url} ~= /^https?:\/\/emdcadvertise\.eastmoney\.com\/infoService\/v\d/i then reject(200)
+request if ${url} ~= /^https?:\/\/emdcadvise\.eastmoney\.com\/infoAdviseService\//i then reject(200)
+
+# 广告图片 CDN
+request if ${url} ~= /^https?:\/\/swdlcdn\.eastmoney\.com\/app\/adimg\//i then reject_img(200)
+
+[MITM]
+hostname = choicegw2.eastmoney.com, emdcadvertise.eastmoney.com, emdcadvise.eastmoney.com, swdlcdn.eastmoney.com

@@ -1,0 +1,15 @@
+#!name=广州农商银行去广告
+#!desc=移除广州农商银行开屏广告。
+#!openUrl=https://apps.apple.com/app/id1484214262
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/75/88/e9/7588e9df-05c7-fa30-4bf0-0b912f887823/AppIcon-1x_U007emarketing-0-11-0-sRGB-85-220-0.png/120x120bb.png
+
+[Rewrite]
+# 开屏素材目录
+request if ${url} ~= /^https?:\/\/mbank\.grcbank\.com\/ydyh\/resources\/startpage\/[^?#]+\.(?:jpe?g|png)(?:\?[^#]*)?$/i then reject_img(200)
+
+[MITM]
+hostname = mbank.grcbank.com

@@ -1,0 +1,38 @@
+#!name=广发去广告
+#!desc=移除广发发现精彩开屏广告、弹窗广告、卡门户横幅及理财推荐。如影响跳转云闪付或绑卡请暂时禁用。
+#!openUrl=https://apps.apple.com/app/id1080102294
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/59/93/87/59938753-a514-8727-af58-91ec8c414f14/AppIcon-1x_U007emarketing-0-7-0-85-220-0.png/120x120bb.png
+
+[Rewrite]
+# 2026-09-28 撤销 09-24 的 icppweb/images/modelMaterial/advertising/ 整目录拒绝：使用者反馈 App 内正常图片也放在该目录、一并被拦。
+# 弹窗广告目录，取自 fmz200/wool_scripts FaXianJingCai 与 zirawell/R-Store cgbcc（2026-08-19）。回 404 让弹窗因素材下载失败不出现。
+request if ${url} ~= /^https:\/\/static\.95508\.com\/mmg\/ciop\/sysabbr\/cmep\/images\/(app)?popupads/i then reject(404)
+# 理财个性化推荐接口，取自 zirawell/R-Store 发现精彩 cgbcc（2026-08-20 新增）。只为这一条解密 wap.cgbchina.com.cn 的 443 端口；两次冷启动的日志里这台主机有请求，但还没见到这个接口本身。
+request if ${url} ~= /^https:\/\/wap\.cgbchina\.com\.cn\/mdpNativeApi\/cawp\/h5-wealth-app\/noSessionServlet\/cawp\/base\/getPersonalizedRecommendations/ then reject_dict(200)
+# 2026-11-18 补：发现精彩卡门户广告图（R-Store cgb 的 mps 主机）。文件名是 25 位数字编号，只在 adv 目录下生效，
+# 换透明图避免开卡页出现占位框。此前本插件只覆盖 static.95508.com，mps.95508.com 整台没管。
+request if ${url} ~= /^https:\/\/mps\.95508\.com\/mps\/club\/cardPortals\/adv\/\d{25}\.(?:png|jpe?g)(?:\?[^#]*)?$/i then reject_img(200)
+
+[Script]
+# 本轮关闭长期诊断通知；尺寸过滤范围保持，素材来源与手机效果仍须复验。
+# 开屏。上游（Yfamily、fmz200、blackmatrix7）的规则都指向 mmg/images/ads/<子目录>/；2026-10-06 按它在该目录加了 splash 模式的尺寸拦截。
+# 2026-10-07 使用者实测仍有开屏：冷启动后脚本只在该目录执行了 6 次，全局日志里没有任何图片地址，素材位置仍然不知道。
+# 临时诊断：脚本范围扩大到整台图片主机并打开 notify，手机上每张较大的竖图都会弹一条通知（尺寸、处理结果、地址）。
+# splash 模式只对整屏竖图回 404，横幅、图标、楼层背景都原样放行。拿到素材的真实地址和尺寸后收回到具体目录并去掉 notify。
+# 同日 11:53 冷启动日志：启动后 0.5 秒只连了 8.95508.com（443 端口 18 条）和几台 cgbchina 主机，static.95508.com 第 27 秒才出现，
+# 启动瞬间的开屏不是当场从 static 下载的，是此前缓存的；这里拦的是进首页后的预下载，已缓存的那张要等过期或清 App 缓存才消失。
+# 8.95508.com 不解密：09-23/24 查过，它是 mPaaS 网关（creditbank/mgs/mgw.htm），响应体应用层加密，启动时只有框架调用，
+# 进首页才有 com.ifp.MP* / com.um.MH* 业务方法，当时拒掉 com.um.* 广告仍在，已撤。
+response if ${url} ~= /^https:\/\/static\.95508\.com\/(?:mmg\/images\/ads|icppweb\/images\/modelMaterial\/advertising)\/[^?#]+\.(?:png|jpe?g|gif|webp|heic|avif|mp4)(?:\?[^#]*)?$/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "mode=splash") with tag="广发开屏尺寸拦截", timeout=10, requires_body=true, binary_body_mode=true
+
+# 2026-10-07 15:11 调试级日志（广发手机银行 CGBMBank 11.7.2.2 与发现精彩 9.20.0 各冷启动一次）：static.95508.com 上 61 张图全是图标、横幅和卡片，
+# 最大 1125×975，没有整屏竖图；mmg/images/ads/ 下只有一条 1035×120 的横幅和一个 93×48 的角标。启动时没有下载开屏图，与“开屏来自缓存”一致。
+# 同日撤掉广发手机银行的诊断规则和 *.cgbchina.com.cn 解密：这些主机上一张图片都没有，而通配声明实际把 8443、30000、58897 端口的
+# mPaaS 网关、日志上报和埋点也解密了，超出本意。
+
+[MITM]
+hostname = static.95508.com, mps.95508.com, wap.cgbchina.com.cn

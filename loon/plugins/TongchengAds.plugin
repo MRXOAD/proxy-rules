@@ -1,0 +1,45 @@
+#!name=同程旅行去广告
+#!desc=移除同程旅行应用及小程序开屏广告、首页弹窗与二楼、热搜推荐、订单中心推荐及各频道横幅与悬浮广告。
+#!openUrl=https://apps.apple.com/app/id475966832
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9f/e2/38/9fe238a0-8bbd-6624-b00c-db517e43418a/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/120x120bb.jpg
+
+[Rewrite]
+# --- 小程序端首页 ---
+# 首页开屏、banner 与聚合页
+request if ${url} ~= /^https?:\/\/wx\.17u\.cn\/xcxhomeapi\/(?:aggregator\/index|home\/(?:screen|banner|converge))$/i then reject(404)
+# 小程序广告物料与广告图地址
+request if ${url} ~= /^https?:\/\/wx\.17u\.cn\/crapi\/query\/(?:ad|getAdImgUrlByCode)(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/wx\.17u\.cn\/mihawkapi\/ad\/info(?:\?|$)/i then reject(200)
+
+# --- App 首页开屏与弹窗 ---
+# openscreen 开屏、appPopup 与 getpopupimages 弹窗、newmemberzone 新人专区、getsecondfloorlist 二楼、gethotrecommend 热搜推荐
+request if ${url} ~= /^https?:\/\/tcmobileapi\.17usoft\.com\/appindexnew\/index\/(?:openscreen|appPopup|getpopupimages|newmemberzone|getsecondfloorlist|gethotrecommend)(?:\?|$)/i then reject_dict(200)
+# 会员营销弹屏
+request if ${url} ~= /^https?:\/\/tcmobileapi\.17usoft\.com\/userextend\/member\/screenPop(?:\?|$)/i then reject(200)
+# 订单中心推荐位
+request if ${url} ~= /^https?:\/\/tcmobileapi\.17usoft\.com\/backendActivity\/ori\/ordercenter\/recommend(?:\?|$)/i then reject_dict(200)
+# 首页配置开关：里面有开屏与营销位总开关，拒绝后回落到无营销的默认配置
+request if ${url} ~= /^https?:\/\/tcmobileapi\.17usoft\.com\/appindexnew\/index\/getappindexconfig(?:\?|$)/i then reject(200)
+
+# --- 首页静态配置里的 banner 位（字段级改写，保留其余配置）---
+# 依据：ccyykk666 的 jq，清空 bannerList 并把 total 归零
+response if ${url} ~= /^https?:\/\/m\.ly\.com\/wlfrontend\/module\/index\/appIndexStaticConfig(?:\?|$)/i then response.json.jq("(if (try (.Body.bannerInfo.bannerList | type) catch null) == \"array\" then .Body.bannerInfo.bannerList = [] | .Body.bannerInfo.total = 0 else . end)")
+
+# --- 各业务页广告位 ---
+# 签证首页广告弹窗
+request if ${url} ~= /^https?:\/\/m\.ly\.com\/visa\/fetch\/home\/getAdvDialogData(?:\?|$)/i then reject_dict(200)
+# 景点页轮播图与右下角悬浮窗
+request if ${url} ~= /^https?:\/\/mobileapi\.ly\.com\/wlfrontend\/app\/scenicMain(?:\?|$)/i then reject_dict(200)
+# 酒店广告（艺龙通道）
+request if ${url} ~= /^https?:\/\/mobilehotelapi\.elong\.com\/appHotel\/adx\/advert\/getAdvert(?:\?|$)/i then reject_dict(200)
+# 广告网关物料列表（adv 与 adgateway 两种路径形态）
+request if ${url} ~= /^https?:\/\/mobile-api2011\.elong\.com\/ad(?:v|gateway)/i then reject(200)
+# 马尔代夫频道的广告配置
+request if ${url} ~= /^https?:\/\/mada-travel\.17u\.cn\/mdapi\/config\/ads(?:\?|$)/i then reject_dict(200)
+
+[MITM]
+hostname = wx.17u.cn, mada-travel.17u.cn, tcmobileapi.17usoft.com, m.ly.com, mobileapi.ly.com, mobile-api2011.elong.com, mobilehotelapi.elong.com

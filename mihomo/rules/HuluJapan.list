@@ -1,0 +1,9 @@
+# Hulu 日本业务 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Hulu Japan split
+# TOTAL: 4
+
+DOMAIN-SUFFIX,happyon.jp
+DOMAIN-SUFFIX,hjholdings.jp
+DOMAIN-SUFFIX,hulu.jp
+DOMAIN-SUFFIX,prod.hjholdings.tv

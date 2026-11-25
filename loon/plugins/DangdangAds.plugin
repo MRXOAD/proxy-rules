@@ -1,0 +1,20 @@
+#!name=当当去广告
+#!desc=移除当当开屏广告及首页启动推广配置。
+#!openUrl=https://apps.apple.com/app/id488202082
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5d/a4/76/5da47669-d1e3-5306-394d-a8603497f316/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 开屏启动页。上游有 media/api、media/api1.go、任意路径三种写法，窄的会被宽的吞掉，
+# 这里合成一条匹配整主机任意路径的规则，动作统一为返回 200 空响应
+request if ${url} ~= /^https?:\/\/e\.dangdang\.com\/.*getDeviceStartPage/i then reject(200)
+
+# 首页初始化下发（含开机启动图与首页楼层广告配置）
+request if ${url} ~= /^https?:\/\/api\.dangdang\.com\/mapi\d\/mobile\/init/i then reject(200)
+request if ${url} ~= /^https?:\/\/mapi\.dangdang\.com\/index\.php\?action=init/i then reject(200)
+
+[MITM]
+hostname = e.dangdang.com, api.dangdang.com, mapi.dangdang.com

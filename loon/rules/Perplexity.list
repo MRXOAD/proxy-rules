@@ -1,0 +1,12 @@
+# Perplexity 美国优先 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Perplexity
+# TOTAL: 6
+# 用途与范围：Perplexity 主站及已登记上传/图片资源。
+
+DOMAIN,ppl-ai-file-upload.s3.amazonaws.com
+DOMAIN,pplx-res.cloudinary.com
+DOMAIN-SUFFIX,perplexity.ai
+DOMAIN-SUFFIX,perplexity.app
+DOMAIN-SUFFIX,perplexity.com
+DOMAIN-SUFFIX,pplx.ai

@@ -1,0 +1,6 @@
+# Cloudflare Challenge 分流规则（mihomo classical 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD local Cloudflare Challenge
+# TOTAL: 1
+payload:
+  - DOMAIN,challenges.cloudflare.com

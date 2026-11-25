@@ -1,0 +1,15 @@
+# GeoIP CN 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD local GeoIP CN
+# TOTAL: 9
+# 用途与范围：末位中国地理 IP 判断；与无需解析的域名表分开。
+
+GEOIP,CN
+IP-CIDR,10.0.0.0/8
+IP-CIDR,100.64.0.0/10
+IP-CIDR,127.0.0.0/8
+IP-CIDR,169.254.0.0/16
+IP-CIDR,172.16.0.0/12
+IP-CIDR,192.168.0.0/16
+IP-CIDR6,fc00::/7
+IP-CIDR6,fe80::/10

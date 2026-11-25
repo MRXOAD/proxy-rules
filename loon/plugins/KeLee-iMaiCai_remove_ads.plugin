@@ -1,0 +1,31 @@
+#!name=小象超市去广告
+#!desc=移除开屏广告、应用内弹窗、猜你想买、横幅推广和悬浮窗。
+#!openUrl=https://apps.apple.com/app/id1444411068
+#!author=可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+#!tag=去广告
+#!system=
+#!system_version=
+#!loon_version=3.5.1(998)
+#!homepage=https://hub.kelee.one
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/c3/91/bd/c391bdff-aa63-8601-0acb-fd3de8210a37/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/144x144bb.png
+#!date=2026-10-02 13:57:49
+# 本地修改：rules/本地补充/可莉插件/iMaiCai_remove_ads.list（3 条）
+
+[Rewrite]
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/homepage\/splash/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/homepage\/bubble\/operate\/info/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/jigsaw\/code\/category-banner-\d+\//i then reject_dict(200)
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/poi\/\d+\/order\/recommend\/v\d/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/banner\//i then reject_dict(200)
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/poi\/\d+\/personal\/recommend/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/businessapi\.ksedt\.com\/signupindex\/jxlist/i then reject_dict(200)
+
+[Script]
+response if ${url} ~= /^https:\/\/portal-portm\.meituan\.com\/horn_ios\/mergeRequest/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/KeLee-iMaiCai_remove_ads.js") with tag="移除下发广告", requires_body=true
+
+[MitM]
+hostname=portal-portm.meituan.com, mall.meituan.com, businessapi.ksedt.com
+
+[Rule]
+AND,((DOMAIN,mall.meituan.com),(PROTOCOL,QUIC)),REJECT
+AND,((DOMAIN,portal-portm.meituan.com),(PROTOCOL,QUIC)),REJECT

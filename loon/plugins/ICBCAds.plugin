@@ -1,0 +1,27 @@
+#!name=工行去广告
+#!desc=移除中国工商银行开屏广告及统计上报，不包含工银e生活。
+#!openUrl=https://apps.apple.com/app/id433542517
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c9/6e/49/c96e4981-d3a9-f9d0-cff5-4d36135fdc3b/AppIcon-0-0-1x_U007ephone-0-1-0-0-sRGB-85-220.png/120x120bb.png
+
+[Rule]
+# 页面浏览统计与 APM 监控，整域拒绝（R-Store icbc）。2026-11-17—18 日志里 mobileapm 有 4 次请求，属常态上报，
+# 这两条不需要解密，撤销时不影响任何已解密主机。
+DOMAIN,pageviewp.icbc.com.cn,REJECT
+DOMAIN,mobileapm.icbc.com.cn,REJECT
+# 2026-11-18 复核：fmz200 的 v.icbc.com.cn/userfiles/Resources/WAP/advertisement 一条没有收回来。
+# 本地补充 2026-10-03 记录显示这台主机解密握手从未成功（工行 e 生活不接受本机 CA），
+# 不解密则 request 规则永不命中——写成规则只是死条目，白占解密面。
+
+[Script]
+# 只拦整屏开屏竖图（高 ≥ 1000 且高宽比 1.5—2.3）回 404，横幅、卡片、长海报与其余内页图一律放行。
+# 2026-10-03 去掉 e 生活 image1—4.elife：使用者反映 e 生活素材大面积不显示；当天 12:40 日志里 e 生活每次拉素材列表（eiop）后
+# 0.5 秒内集中出现解密握手被拒（77 次，App 不接受本机 CA，失败的握手不留主机行，编号空缺 85 个与之对上），而工行主机里
+# 只有这几个图片主机被解密。e 生活开屏因此不再按尺寸拦。
+response if ${url} ~= /^https:\/\/image\.mybank\.icbc\.com\.cn\/.+/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "mode=splash") with tag="工行开屏尺寸拦截", timeout=10, requires_body=true, binary_body_mode=true
+
+[MITM]
+hostname = image.mybank.icbc.com.cn

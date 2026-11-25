@@ -1,0 +1,32 @@
+#!name=薄荷健康去广告
+#!desc=移除开屏广告、首页悬浮气泡、横幅推广、搜索推荐及弹窗，精简首页广场与代谢页推广模块。
+#!openUrl=https://apps.apple.com/app/id590710298
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/07/16/f1/0716f10e-492c-9997-8053-e5ed64951166/AppIcon-0-0-1x_U007epad-0-11-0-sRGB-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 开机启动页
+request if ${url} ~= /^https?:\/\/status\.boohee\.com\/api\/v\d+\/app_square\/start_up_with_ad/i then reject(404)
+
+# 首页悬浮气泡、工具栏推广按钮、搜索页推荐、首页横幅
+request if ${url} ~= /^https?:\/\/api\.boohee\.com\/meta-interface\/v1\/index\/(?:page_float_bubbles|tool_buttons|sensor-banners)\?/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/api\.boohee\.com\/app-interface\/v1\/search\/search\?/i then reject_dict(200)
+
+# 消息中心里的营销消息
+request if ${url} ~= /^https?:\/\/status\.boohee\.com\/api\/v1\/merged_messages$/i then reject_dict(200)
+
+# 神策的弹窗配置下发
+request if ${url} ~= /^https?:\/\/bohe\.sfo-tx-shanghai-01\.saas\.sensorsdata\.cn\/api\/v2\/sfo\/user_popup_configs\?/i then reject_dict(200)
+
+# 首页广场、首页主接口、代谢页：营销卡与内容混排，保留上游脚本按字段剔除
+
+[Script]
+response if ${url} ~= /^https?:\/\/api\.boohee\.com\/meta-interface\/v1\/index\/plaza\?/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-bohe_ads.js") with requires_body=true
+response if ${url} ~= /^https?:\/\/api\.boohee\.com\/meta-interface\/v2\/index\?/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-bohe_ads.js") with requires_body=true
+response if ${url} ~= /^https?:\/\/api\.boohee\.com\/open-interface\/v1\/string\/market_page\?title=metabolism_config$/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-bohe_ads.js") with requires_body=true
+
+[MITM]
+hostname = api.boohee.com, status.boohee.com, bohe.sfo-tx-shanghai-01.saas.sensorsdata.cn

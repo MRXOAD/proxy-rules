@@ -1,0 +1,8 @@
+# Spotify 账号与接口（固定地区顺序） 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD local Spotify account
+# TOTAL: 3
+
+DOMAIN-SUFFIX,spoti.fi
+DOMAIN-SUFFIX,spotify.com
+DOMAIN-SUFFIX,spotify.link

@@ -1,0 +1,15 @@
+#!name=途牛去广告
+#!desc=移除途牛旅游开屏广告。
+#!openUrl=https://apps.apple.com/app/id480098221
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/25/e7/84/25e78485-4c65-c9bb-97dc-92edf5ff4788/AppIcon-1x_U007emarketing-0-6-0-sRGB-85-220-0.png/120x120bb.jpg
+
+[Rewrite]
+# 开屏广告：上游三源一致（fmz200 reject-200、zirawell mock 空文本）
+request if ${url} ~= /^https?:\/\/m\.tuniu\.com\/api\/operation\/splash\//i then reject_dict(200)
+
+[MITM]
+hostname = m.tuniu.com

@@ -1,0 +1,10 @@
+# Hugging Face 美国优先 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD HuggingFace
+# TOTAL: 4
+# 用途与范围：Hugging Face 已收录主站、镜像存储与资源域。
+
+DOMAIN-SUFFIX,hf.co
+DOMAIN-SUFFIX,hf.space
+DOMAIN-SUFFIX,huggingface.co
+DOMAIN-SUFFIX,huggingface.com

@@ -1,0 +1,27 @@
+#!name=中信银行去广告
+#!desc=移除中信银行开屏广告及页面推广配置。
+#!openUrl=https://apps.apple.com/app/id517386615
+#!author=MRXOAD[https://github.com/MRXOAD], 怎么个事[https://t.me/Nzmgs/102]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/45/c6/36/45c6364c-f560-0798-cab1-e5050bf4beca/AppIcon-1x_U007emarketing-0-4-0-0-sRGB-85-220-0.png/100x100bb.jpg
+
+[Rewrite]
+# 原 URL 参数宽高范围规则已退役：使用者实测正常素材缺失、开屏再次出现。
+# 接口来源：fmz200 ChinaCITICBank.lpx、blackmatrix7 AdvertisingLite 的 CUBEPAGEDATA 请求规则。
+# 现场入口 wap.citicbank.cn:6443、wap.bank.ecitic.com:443，另补回公开规则的旧入口 :6443 及 HTTP。
+# 仅匹配 URL 中的完整 act 值；未取得请求体/响应体，不拒绝整个 cbframework 接口。
+request if ${url} ~= /^https?:\/\/wap\.citicbank\.cn:6443\/NMBFOServer\/cbframework\.do\?(?:[^&#]*&)*act=CUBEPAGEDATA(?:&|$)/ then reject(200)
+request if ${url} ~= /^https?:\/\/wap\.bank\.ecitic\.com(?::(?:443|6443))?\/NMBFOServer\/cbframework\.do\?(?:[^&#]*&)*act=CUBEPAGEDATA(?:&|$)/ then reject(200)
+# 2026-11-18 补：移动端埋点采集（R-Store ecitic），返回空对象即可，不影响业务。
+request if ${url} ~= /^https?:\/\/edata\.bank\.ecitic\.com\/mobile\/collect\.do/i then reject_dict(200)
+
+[Script]
+# 使用者明确允许继续图片拦截；复用浦大喜奔/工行的图片头解析，不依赖 URL 中的宽高或旧文件名。
+# 公开中信尺寸 1125×2436、1242×2688、750×1638 的高宽比约 2.16；比其他银行默认 1.5–2.3 更窄。
+# 高 ≥ 1000、比例 2–2.3 才回 404，无法识别的图片原样放行；尺寸本身不能证明图片一定是广告。
+response if ${url} ~= /^https?:\/\/autoload\.bank\.ecitic\.com\/imcslego\/cloud\/[^\/?#]+\.(?:png|jpe?g|gif|webp)(?:\?[^#]*)?$/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "mode=splash&ratio=2") with tag="中信银行开屏尺寸拦截", timeout=10, requires_body=true, binary_body_mode=true
+
+[MITM]
+hostname = wap.citicbank.cn:6443, wap.bank.ecitic.com, autoload.bank.ecitic.com, edata.bank.ecitic.com

@@ -1,0 +1,13 @@
+# Reuters 美国优先 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Reuters
+# TOTAL: 8
+
+DOMAIN-SUFFIX,reut.rs
+DOMAIN-SUFFIX,reuters.com
+DOMAIN-SUFFIX,reuters.tv
+DOMAIN-SUFFIX,reutersagency.com
+DOMAIN-SUFFIX,reutersbest.com
+DOMAIN-SUFFIX,reutersmedia.net
+DOMAIN-SUFFIX,thomsonreuters.com
+DOMAIN-SUFFIX,tr.com

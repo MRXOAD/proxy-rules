@@ -1,0 +1,37 @@
+# Bybit 全部直连（Loon/Mihomo） 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Bybit direct
+# TOTAL: 31
+# 用途与范围：Bybit 已登记域名与关键词直连；不代表所有交易所直连。
+
+DOMAIN,api.manepa.jp
+DOMAIN,api.spark-fintech.com
+DOMAIN,stream.manepa.jp
+DOMAIN,stream.spark-fintech.com
+DOMAIN-SUFFIX,byabcde.com
+DOMAIN-SUFFIX,byapis.com
+DOMAIN-SUFFIX,byapps.net
+DOMAIN-SUFFIX,bybdc6.com
+DOMAIN-SUFFIX,bybit-global.com
+DOMAIN-SUFFIX,bybit-tr.com
+DOMAIN-SUFFIX,bybit.ae
+DOMAIN-SUFFIX,bybit.biz
+DOMAIN-SUFFIX,bybit.cloud
+DOMAIN-SUFFIX,bybit.com
+DOMAIN-SUFFIX,bybit.com.hk
+DOMAIN-SUFFIX,bybit.eu
+DOMAIN-SUFFIX,bybit.id
+DOMAIN-SUFFIX,bybit.kz
+DOMAIN-SUFFIX,bybit.nl
+DOMAIN-SUFFIX,bybit.tr
+DOMAIN-SUFFIX,bybitgeorgia.ge
+DOMAIN-SUFFIX,bybitglobal.com
+DOMAIN-SUFFIX,bycbe.com
+DOMAIN-SUFFIX,bycsi.com
+DOMAIN-SUFFIX,byd3c3.com
+DOMAIN-SUFFIX,byhkbit.com
+DOMAIN-SUFFIX,bymj.io
+DOMAIN-SUFFIX,bytick.com
+DOMAIN-KEYWORD,bybit
+IP-CIDR,43.135.121.179/32,no-resolve
+IP-CIDR,43.154.61.67/32,no-resolve

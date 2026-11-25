@@ -1,0 +1,21 @@
+#!name=财新正文去广告
+#!desc=移除财新首页及正文广告位、文末推广。
+#!openUrl=https://apps.apple.com/app/id356023612
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(998)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/27/13/69/271369e9-7506-aa64-6c10-72bbe9a84938/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/120x120bb.jpg
+
+[Rule]
+DOMAIN,dolphin.caixin.com,REJECT
+
+[Rewrite]
+# 公开响应 code=0，data 仅含 list513/list520 等广告位编号与比例。
+request if ${url} ~= /^https:\/\/mappsv5\.caixin\.com\/channelv5\/article_ad_ios_info\.json(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/gateway\.caixin\.com\/api\/app-api\/cxAdInfo\/selectIndexAdInfo(?:\?|$)/i then reject_dict(200)
+# 可莉/RuCu6 的 articlePromotionList，仅清文末推广，其他 App 配置保持。
+response if ${url} ~= /^https:\/\/gateway\.caixin\.com\/api\/app-api\/caixinapp\/appinfo(?:\?|$)/i then response.json.jq("if (try (.data.articlePromotionList | type == \"array\") catch false) then .data.articlePromotionList = [] else . end")
+
+[MITM]
+hostname = gateway.caixin.com, mappsv5.caixin.com

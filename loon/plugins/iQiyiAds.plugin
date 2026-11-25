@@ -1,0 +1,45 @@
+#!name=爱奇艺去广告
+#!desc=移除爱奇艺开屏广告、首页与频道焦点广告、信息流广告、搜索广告及播放页弹窗推广，精简播放页标签栏。
+#!openUrl=https://apps.apple.com/app/id393765873
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/a3/b5/e8/a3b5e8ed-8be4-1e01-5401-79c87504cb55/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 国际版广告位
+request if ${url} ~= /^https?:\/\/intl\.iqiyi\.com\/(?:ad_external\/|video\/advertise)/i then reject(404)
+
+# 开屏广告（脚本按条目剔除，不整条拒绝）
+
+# 首页：删统计埋点与焦点图、移动信息流广告、激励视频广告三类卡片
+response if ${url} ~= /^https?:\/\/cards\.iqiyi\.com\/views_home\/3\.0\/qy_home\?/i then response.json.jq("del(.base.statistics) | del(.cards[]? | select(.alias_name == \"focus\" or .alias_name == \"ad_mobile_flow\" or .alias_name == \"ad_trueview\"))")
+
+# 频道页：同样删统计与焦点图、激励视频广告卡
+response if ${url} ~= /^https?:\/\/cards\.iqiyi\.com\/views_category\/3\.0\/category_home\?/i then response.json.jq("del(.base.statistics) | del(.cards[]? | select(.alias_name == \"entrence_focus\" or .alias_name == \"ad_trueview\"))")
+
+# 信息流（含 plt 变体）：删广告段落
+response if ${url} ~= /^https?:\/\/cards\.iqiyi\.com\/waterfall(?:-plt)?\/3\.0\/feed\?/i then response.json.jq("del(.base.statistics) | del(.. | select(.block_class?))")
+
+# 播放页标签栏：删会员推广、广告标签、短视频与瀑布流标签
+response if ${url} ~= /^https?:\/\/cards\.iqiyi\.com\/views_plt\/3\.0\/player_tabs_v2\?/i then response.json.jq("del(.kv_pair.activity_tab) | del(.cards[]? | select(.alias_name == \"play_vip_promotion\" or .alias_name == \"play_detail_tag\" or .alias_name == \"play_chat_entrance\" or .alias_name == \"play_ad_no_vip\" or .alias_name == \"play_vertical_short_video\" or .alias_name == \"play_rap_custom\" or .alias_name == \"play_topical_tab\" or .alias_name == \"play_vertical\" or .alias_name == \"play_water_fall_like\")) | del(.. | select(.block_class?))")
+
+# 搜索结果页：删广告卡与搜索中插文字广告
+response if ${url} ~= /^https?:\/\/cards\.iqiyi\.com\/views_search\/3\.0\/hot_query_search\?/i then response.json.jq(".cards |= map(select(.alias_name as $n | $n != \"ad_trueview\" and $n != \"ad_mobile_flow\" and $n != \"search_mid_text_ad\")) | if .base.statistics.ad_str? then del(.base.statistics) else . end")
+
+# 初始化配置里的广告开关
+request if ${url} ~= /^https?:\/\/iface2\.iqiyi\.com\/control\/3\.0\/init_proxy\?/i then reject_dict(200)
+
+# 播放页开通会员提示与青少年弹窗
+request if ${url} ~= /^https?:\/\/act\.vip\.iqiyi\.com\/interact\/api\/v2\/show\?/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/iface2\.iqiyi\.com\/views_pop\/3\.0\/pop_control\?/i then reject_dict(200)
+
+# 播放页多余动效
+request if ${url} ~= /^https?:\/\/iface2\.iqiyi\.com\/ivos\/interact\/video\/data\?/i then reject_dict(200)
+
+[Script]
+response if ${url} ~= /^https?:\/\/.*cupid\.iqiyi\.com\/mixer\?/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-iqiyi_open_ads.js") with requires_body=true
+
+[MITM]
+hostname = intl.iqiyi.com, cupid.iqiyi.com, cards.iqiyi.com, iface2.iqiyi.com, act.vip.iqiyi.com

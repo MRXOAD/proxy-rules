@@ -1,0 +1,10 @@
+# PlayStation 美国/日本优先 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD PlayStation
+# TOTAL: 5
+
+DOMAIN-SUFFIX,playstation
+DOMAIN-SUFFIX,playstation-cloud.com
+DOMAIN-SUFFIX,playstation.com
+DOMAIN-SUFFIX,playstation.net
+DOMAIN-SUFFIX,playstationnetwork.com

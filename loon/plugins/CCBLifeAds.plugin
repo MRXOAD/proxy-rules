@@ -1,0 +1,22 @@
+#!name=建行生活去广告
+#!desc=移除建行生活首页横幅广告及我的页面悬浮推广。
+#!openUrl=https://apps.apple.com/app/id1460848628
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3e/03/3e/3e033e79-ed90-159c-6fb2-56ccd5409bb8/AppIcon-0-1x_U007ephone-0-11-0-sRGB-85-220-0.png/120x120bb.png
+
+[Rule]
+# 内置饿了么的广告日志域（fmz200）
+DOMAIN,o2o-ad-log-gateway.alibaba.com,REJECT
+
+[Rewrite]
+# 首页横幅广告位（101 系列 txcode，fmz200 2026-11-11）
+request if ${url} ~= /^https?:\/\/yunbusiness\.ccb\.com\/clp_service\/txCtrl\?(?:[^&#]*&)*txcode=A3341A(?:002|006|009|119|120)(?:&|$)/i then reject(200)
+request if ${url} ~= /^https?:\/\/yunbusiness\.ccb\.com\/clp_service\/txCtrl\?(?:[^&#]*&)*txcode=A3341C147(?:&|$)/i then reject(200)
+# 我的页面悬浮广告位
+request if ${url} ~= /^https?:\/\/yunbusiness\.ccb\.com\/basic_service\/txCtrl\?(?:[^&#]*&)*txcode=A3341AB05(?:&|$)/i then reject_dict(200)
+
+[MITM]
+hostname = yunbusiness.ccb.com

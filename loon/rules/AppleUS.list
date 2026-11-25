@@ -1,0 +1,7 @@
+# Apple US Account 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Apple US Account
+# TOTAL: 1
+# 用途与范围：当前仅 Apple Podcasts 需要海外出口的规则；名称不代表所有 Apple 业务。
+
+DOMAIN-SUFFIX,podcasts.apple.com

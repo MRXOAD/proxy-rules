@@ -1,0 +1,32 @@
+#!name=民生去广告
+#!desc=移除中国民生银行开屏广告及首页横幅推广，不包含全民生活。
+#!openUrl=https://apps.apple.com/app/id538850469
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/a6/41/10/a64110b6-f636-3158-9d8d-03428a93da69/AppIcon-0-0-1x_U007ephone-0-1-0-sRGB-85-220.png/120x120bb.png
+
+[Rewrite]
+# 2026-11-18 从广告重写迁回，插件自持（此前只挂在 AdRewrite 的本地补充里，关掉 AdRewrite 就没了）。
+# 开屏图与首页横幅素材（fmz200、R-Store 共有）。官网目录按路径拦，比按尺寸稳。
+request if ${url} ~= /^https?:\/\/www\.cmbc\.com\.cn\/m\/image\/loadingpage\//i then reject(200)
+request if ${url} ~= /^https?:\/\/www\.cmbc\.com\.cn\/m\/image\/banner\/.*\.png/i then reject(200)
+
+[Script]
+# 本轮关闭长期诊断通知；尺寸过滤范围保持，素材来源与手机效果仍须复验。
+# 2026-10-07 03:04 日志：民生银行 App 冷启动第一条连接就是 www.cmbc.com.cn 的 80 端口，30 秒内该主机 80 端口 98 条、443 端口 152 条，
+# 另有 static.cmbc.com.cn（80 端口 6 条、443 端口 4 条）和 gd.cmbc.com.cn（443 端口 10 条）。全局日志不记录地址，素材在哪台主机、哪个目录都不知道。
+# 同日 03:29 经使用者授权在路由器上记录了一次冷启动的明文请求：只有首页探测、签到页和 lifeProductImg 下 4 张方形小图（240—500 像素），
+# 开屏图不走明文。使用者随后授权解密 static、gd 两台主机的 443 端口，三台主机的图片一起诊断；业务网关 m1.cmbc.com.cn 不解密。
+# splash 模式只对整屏竖图回 404，其余原样放行；notify 让每张较大的竖图弹一条本机通知（尺寸、处理结果、地址）。拿到素材地址后收回到具体目录并去掉 notify。
+# 同日 11:52 冷启动日志：启动后 0.5 秒最先连的是 m.creditcard.cmbc.cn、rs.creditcard.cmbc.cn 和 mnr.cmbc.com.cn:6279，上面三台内容主机第 7—10 秒才出现，
+# 图片脚本第 10 秒才第一次执行，开屏不是从那三台当场取的。同日一度加入 rs.creditcard.cmbc.cn，15:11 的调试级日志显示它只有签到页，已撤回。
+# 15:11 调试级日志（民生银行 10.61.1 冷启动）：三台主机上只有 lifeProductImg 小图标和 gd 的埋点接口；menu10/sc_cover_bg_*_1125_2436.png 被服务器 302 到官网首页。
+# 其余 27 条连接都去了没解密的业务网关 m1.cmbc.com.cn。m.creditcard.cmbc.cn 校验证书（09-23 实测）不解密；mnr 的 6279 端口是自定义协议，解不了。
+# 15:42 第二轮冷启动结果相同，使用者确认开屏仍在，并同意解密 m1.cmbc.com.cn 来查。16:06 实测它校验证书：34 条连接里 32 条被 App 在握手完成前断开
+# （日志行 H2 MITM client disconnected before TLS handshake completed），只有 estabSession.do 与 msGetAppDnsConfigService.do 两个请求走通。已撤回，不得再解密。
+response if ${url} ~= /^https?:\/\/(?:www|static|gd)\.cmbc\.com\.cn\/[^?#]+\.(?:png|jpe?g|gif|webp|heic|avif|mp4)(?:\?[^#]*)?$/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "mode=splash") with tag="民生开屏尺寸拦截", timeout=10, requires_body=true, binary_body_mode=true
+
+[MITM]
+hostname = www.cmbc.com.cn, static.cmbc.com.cn, gd.cmbc.com.cn

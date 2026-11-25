@@ -1,0 +1,9 @@
+# HTTPDNS 功能例外 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD HTTPDNS exclusions
+# TOTAL: 4
+
+DOMAIN,aedns.weixin.qq.com
+DOMAIN,dns.weixin.qq.com
+DOMAIN,dns.weixin.qq.com.cn
+DOMAIN,resolver.msg.xiaomi.net

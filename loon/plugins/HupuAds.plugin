@@ -1,0 +1,41 @@
+#!name=虎扑去广告
+#!desc=移除虎扑开屏广告、横幅推广、画廊推广、搜索热词及红点角标。
+#!openUrl=https://apps.apple.com/app/id906632417
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/bb/5e/0c/bb5e0ca0-d2e6-b06a-d764-b6a9083d0275/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 广告检测与状态上报：返回 1px 图，让 App 收到「无广告」的图片响应
+request if ${url} ~= /^https?:\/\/games\.mobileapi\.hupu\.com\/[\d.]+\/[\d.]+\/(?:search|interfaceAdMonitor|status|hupuBbsPm)\/(?:hotkey|init|hupuBbsPm)\./i then reject_img(200)
+
+# 广告位取数（含 batch 与版本化路径），返回结构正确但广告列表为空
+response if ${url} ~= /^https?:\/\/goblin\.hupu\.com\/\d+\/[\d.]+\/interfaceAd\/getOther(?:\/|\?|$)/i then response.body.mock("json", "{\"ad_code\":-41,\"show_type\":0,\"ads\":[]}", 200)
+
+# 底部红点角标
+request if ${url} ~= /^https?:\/\/games\.mobileapi\.hupu\.com\/\d+\/[\d.]+\/bplapi\/reddot\/v1\/app\/getReddot/i then reject_dict(200)
+
+# 步行街标签热度榜与评分榜
+request if ${url} ~= /^https?:\/\/bbs\.mobileapi\.hupu\.com\/\d+\/[\d.]+\/(?:bbsallapi\/tag\/v1\/heatTag|bbsrankapi\/v1\/rating\/list)/i then reject_dict(200)
+
+# 搜索热词与提示词
+request if ${url} ~= /^https?:\/\/games\.mobileapi\.hupu\.com\/\d+\/[\d.]+\/search\/v2\/(?:hintkeylist|hotkeylist)/i then reject_dict(200)
+
+# 频道画廊推广位
+request if ${url} ~= /^https?:\/\/fairy\.mobileapi\.hupu\.com\/gallery\/getmod2/i then reject(200)
+
+# 评分页分组与位置横幅
+request if ${url} ~= /^https?:\/\/games\.mobileapi\.hupu\.com\/\d+\/[\d.]+\/bplcommentapi\/bpl\/score_tab\/groups/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/games\.mobileapi\.hupu\.com\/\d+\/[\d.]+\/bplapi\/banner\/getLocationBanners/i then reject_dict(200)
+
+# 未覆盖：步行街 lego/data、热门列表 buffer/hotList、用户页 bplapi/user/v1/more、画廊 mang/preview/banners
+# 这四处广告与内容在同一个数组里混排，整条拒绝会把帖子一起删掉。上游用 Kelee 的
+# kelee_HUPU_remove_ads.js 按条目剔除，但该脚本没有本仓镜像，也不引第三方脚本地址，
+# 因此留空。需要时用真机抓包确认广告条目的字段后再补 jq。
+
+request if ${url} ~= /^https?:\/\/i1\.hoopchina\.com\.cn\/blogfile\/.+_\d{3}x\d{4}/i then reject_img(200)
+
+[MITM]
+hostname = games.mobileapi.hupu.com, fairy.mobileapi.hupu.com, bbs.mobileapi.hupu.com, goblin.hupu.com, i1.hoopchina.com.cn

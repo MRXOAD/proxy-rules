@@ -1,0 +1,11 @@
+# Zoom 美国优先 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Zoom
+# TOTAL: 6
+
+DOMAIN-SUFFIX,zmcdn.net
+DOMAIN-SUFFIX,zoom.com
+DOMAIN-SUFFIX,zoom.us
+DOMAIN-SUFFIX,zoomcdn.com
+DOMAIN-SUFFIX,zoomdev.us
+DOMAIN-SUFFIX,zoomgov.com

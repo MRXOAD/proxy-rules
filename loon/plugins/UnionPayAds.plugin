@@ -1,0 +1,24 @@
+#!name=云闪付去广告
+#!desc=拒绝云闪付广告与统计域名并移除钱包大图标开屏物料；不解密收银台、支付、风控与登录网关。
+#!openUrl=https://apps.apple.com/app/id600273928
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f1/6a/4e/f16a4eb9-1de3-833f-0f56-df39c3df6d09/AppIcon-0-1x_U007ephone-0-1-0-sRGB-85-220-0.png/120x120bb.jpg
+
+[Rule]
+# 2026-11-24（R-Store unionpay.list + 11-23 日志实测 analytics/tysdk.95516.com 279 次命中）：
+# 五条均已在 AdRules 覆盖，插件内保留以便单插件自持；不拦支付、收银台与设备风控域。
+DOMAIN,switch.cup.com.cn,REJECT
+DOMAIN,ads.cup.com.cn,REJECT
+DOMAIN,ads.95516.com,REJECT
+DOMAIN,analytics.95516.com,REJECT
+DOMAIN,tysdk.95516.com,REJECT
+
+[Rewrite]
+# 钱包开屏/大图标广告物料（R-Store unionpay.conf）；仅匹配静态物料路径，不触碰业务接口。
+request if ${url} ~= /^https?:\/\/wallet\.95516\.com(?::10533)?\/s\/wl\/icon\/large\/1/i then reject(200)
+
+[MITM]
+hostname = wallet.95516.com

@@ -1,0 +1,61 @@
+#!name=盒马去广告
+#!desc=移除开屏广告、首页信息流广告及推广、弹窗广告、悬浮挂件、商品及购物车推荐，精简底栏及我的页面。
+#!openUrl=https://apps.apple.com/app/id1063183999
+#!author=可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md]
+#!tag=去广告
+#!system=
+#!system_version=
+#!loon_version=3.5.1(998)
+#!homepage=https://hub.kelee.one
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/MrHema.png
+#!date=2026-10-02 13:57:49
+# 本地修改：rules/本地补充/可莉插件/MrHema_remove_ads.list（21 条）
+
+[Rewrite]
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.render\.querysinglepage\//i then reject_dict(200)
+
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.sg\.queryinnerpage\//i then reject_dict(200)
+
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.lbs\.address\.getshopinfolist\//i then reject_dict(200)
+
+response if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.render\.queryindexpage\//i then response.json.jq("if type == \"object\" and (.data | type == \"object\") then (if .data.pageType == \"1\" and (.data.scenes | type == \"array\") then .data.scenes |= map(select(.bizCode == \"three_row_circle\")) else . end | if (.data | has(\"secondFloor\")) then .data.secondFloor = {} else . end) else . end")
+
+response if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.render\.querytabfeedstream\//i then response.json.jq("if type == \"object\" and (.data | type == \"object\") then (if .data.pageType == \"5\" then (if (.data.scenes | type == \"array\") then .data.scenes |= map(select(.sceneType == \"100028\")) else . end) else (if (.data.scenes | type == \"array\") then .data.scenes |= map(select(.sceneType != \"100004\" and ((.pageName // \"\") | contains(\"盒马商家\") | not))) else . end) end) else . end")
+
+response if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/(mtop\.wdk\.render\.querychannelpage|mtop\.wdk\.render\.querysinglepage)\//i then response.json.jq("if .data.pageType == \"216\" then .data.scenes |= map(select(.bizCode == \"shop_walk_top_picture\" or .bizCode == \"shop_walk_shop_util\" or .bizCode == \"shop_walk_bistro\")) else . end")
+
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.render\.querysearchpage\//i then reject_dict(200)
+
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.sg\.querysinglescene\//i then reject_dict(200)
+
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.melon\.collocation\//i then reject_dict(200)
+
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.fc\.recommend\.feedscommondservice\//i then reject_dict(200)
+
+response if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.render\.querymypage\//i then response.json.jq(".data.scenes |= map(select(.sceneType | IN(\"400029\", \"400005\", \"400010\", \"400002\", \"400004\", \"400015\")))")
+
+response if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/(mtop\.wdk\.lbs\.location\.shopdecideapi\.decideformain|mtop\.wdk\.lbs\.location\.shopdecideapi\.decidebygeocode)\//i then response.json.jq(".data.groupList |= map(.ext.tabConfig |= (.normalTabList = (.normalTabList | map(select(.code as $c | [\"HOME\", \"CLASSIFY\", \"CART\", \"MY\"] | any(. == $c)))) | .normalTabListB = (.normalTabListB | map(select(.code as $c | [\"HOME\", \"CLASSIFY\", \"CART\", \"MY\"] | any(. == $c))))))")
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.hippotown\.tabbar\.info(?:\/|\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.alibaba\.emas\.publish\.update\.get(?:\/|\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.crm\.platform\.ma\.recommend(?:\/|\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/acs-m\.freshippo\.com\/gw\/mtop\.wdk\.mimir\.recommend(?!\.hgitems)(?:\/|\?|$)/i then reject_dict(200)
+
+[MitM]
+hostname=acs-m.freshippo.com
+
+[Rule]
+URL-REGEX, "^http:\/\/[^\/]+\/amdc\/mobileDispatch", REJECT
+AND,((DOMAIN,acs-m.freshippo.com),(PROTOCOL,QUIC)),REJECT
+IP-CIDR,47.246.103.9/32,REJECT,no-resolve
+IP-CIDR,47.246.103.10/32,REJECT,no-resolve
+IP-CIDR,59.82.14.1/32,REJECT,no-resolve
+IP-CIDR,59.82.14.161/32,REJECT,no-resolve
+IP-CIDR,59.82.34.147/32,REJECT,no-resolve
+IP-CIDR,59.82.34.255/32,REJECT,no-resolve
+IP-CIDR,59.82.113.10/32,REJECT,no-resolve
+IP-CIDR,59.82.113.219/32,REJECT,no-resolve
+IP-CIDR,106.11.25.120/32,REJECT,no-resolve
+IP-CIDR,106.11.25.169/32,REJECT,no-resolve
+IP-CIDR,106.11.25.170/32,REJECT,no-resolve
+IP-CIDR,139.95.0.151/32,REJECT,no-resolve
+IP-CIDR,139.95.4.98/32,REJECT,no-resolve

@@ -1,0 +1,66 @@
+#!name=美团去广告
+#!desc=移除美团开屏广告、信息流推广、外卖聊天引导卡、各类横幅广告及更新提示。
+#!openUrl=https://apps.apple.com/app/id423084029
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c1/16/65/c1166517-71bb-d29d-d36e-516765f8a537/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-85-220.png/120x120bb.jpg
+
+[Rule]
+AND,((DOMAIN,api.meituan.com),(PROTOCOL,QUIC)),REJECT
+AND,((DOMAIN,wmapi.meituan.com),(PROTOCOL,QUIC)),REJECT
+AND,((DOMAIN,open.meituan.com),(PROTOCOL,QUIC)),REJECT
+
+[Rewrite]
+# --- 开屏与启动 ---
+# 四个入口的启动广告：美团历史上按灰度走 api / open / wmapi / www 不同主机
+request if ${url} ~= /^https?:\/\/api\.meituan\.com\/api\/v\d\/(openscreen\?ad|appstatus\?ad|loadInfo\?|startpicture)/i then reject(200)
+request if ${url} ~= /^https?:\/\/open\.meituan\.com\/api\/v\d\/(openscreen\?ad|appstatus\?ad|loadInfo\?|startpicture)/i then reject(200)
+request if ${url} ~= /^https?:\/\/wmapi\.meituan\.com\/api\/v7\/(loadInfo|openscreen|startpicture)\?/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/wmapi\.meituan\.com\/api\/v\d\/(openscreen\?ad|loadInfo\?|startpicture)/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/www\.meituan\.com\/api\/v\d\/appstatus\?/i then reject(404)
+
+# --- 更新、推荐流与营销接口 ---
+request if ${url} ~= /^https?:\/\/apimobile\.meituan\.com\/appupdate/i then reject(404)
+request if ${url} ~= /^https?:\/\/apimobile\.meituan\.com\/group\/v\d\/recommend\/unity\/recommends/i then reject(404)
+request if ${url} ~= /^https?:\/\/sqt\.meituan\.com\/s\/gateway\/mweb\/api\/marketingResource\/show/i then reject(404)
+request if ${url} ~= /^https?:\/\/peisongapi\.meituan\.com\/client\/getInitiateImage/i then reject(200)
+request if ${url} ~= /^https?:\/\/rms\.meituan\.com\/api\/v\d\/rmsmina\/c\/queryWechatAdvertisement/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/portal-portm\.meituan\.com\/horn_ios(?:\?|$)/i then reject_dict(200)
+
+# 外卖内嵌 IM 的引导卡与优惠卡
+request if ${url} ~= /^https?:\/\/w\.meituan\.net\/v\d\/mss_\w+\/waimai-mach\/\d+\/\d+\/pt-im-(?:guider|coupon-card-stateful)/i then reject(404)
+
+# 隐私合规配置：上游各源一律拒绝。若某次更新后隐私弹窗不出现，先关这一条再复测。
+request if ${url} ~= /^https?:\/\/p\.meituan\.com\/api\/privacy\/config/i then reject(404)
+
+# --- 素材索引与配置 ---
+request if ${url} ~= /^https?:\/\/awp-assets\.meituan\.net\/hfe\/fep\/\w+\.json/i then reject(404)
+request if ${url} ~= /^https?:\/\/s3plus\.meituan\.net\/ocean-blk-index\/index\/blk_conf/i then reject(404)
+request if ${url} ~= /^https?:\/\/s3plus\.meituan\.net\/v\d\/mss_\w+\/brandcpt/i then reject(404)
+request if ${url} ~= /^https?:\/\/s3plus\.meituan\.net\/v\d\/mss_\w+\/waimai-alita\/\w+\.zip$/i then reject(404)
+
+# --- 广告素材图 ---
+# linglong 是开屏与信息流的广告素材通道（s3plus 与 flowplus 双活）
+request if ${url} ~= /^https?:\/\/(s3plus|flowplus)\.meituan\.net\/v\d\/\w+\/linglong\/.+\.(?:gif|jpg|mp4)/i then reject_img(200)
+request if ${url} ~= /^https?:\/\/img\.meituan\.net\/(adunion|display|midas)\/.+\.(gif|jpg)\.webp$/i then reject_img(200)
+request if ${url} ~= /^https?:\/\/img\.meituan\.net\/(adunion|display|midas)\/\w+\.(gif|jpg|jpg\.webp)$/i then reject(200)
+request if ${url} ~= /^https?:\/\/img\.meituan\.net\/(bizad|brandCpt)\/\w+\.(png|jpg)/i then reject(200)
+request if ${url} ~= /^https?:\/\/img\.meituan\.net\/groceryimages\/\w+\.gif/i then reject_img(200)
+request if ${url} ~= /^https?:\/\/img\.meituan\.net\/groceryimages\/\w+\.png@220w_220h_1e_1l/i then reject_img(200)
+request if ${url} ~= /^https?:\/\/p[01]\.meituan\.net\/adunion\//i then reject_img(200)
+request if ${url} ~= /^https?:\/\/p\d\.meituan\.net\/(\d+\.\d+\.\d+\/)?wmbanner\/(?!fb51b9d|4e9d3c4).+\.gif/i then reject_img(200)
+request if ${url} ~= /^https?:\/\/p\d\.meituan\.net\/(bizad|wmbanner)\/\w+\.jpg/i then reject(200)
+request if ${url} ~= /^https?:\/\/p\d\.meituan\.net\/(display|mmc)\//i then reject(404)
+request if ${url} ~= /^https?:\/\/p\d\.meituan\.net\/movie\/.+?\.jpg\?may_covertWebp/i then reject_img(200)
+request if ${url} ~= /^https?:\/\/p\d\.meituan\.net\/nrpresourcevenus\/\w+\.gif/i then reject_img(200)
+# travelcube 是到店与酒旅的广告位；白名单里是真实商品图哈希，不能删
+request if ${url} ~= /^https?:\/\/p\d\.meituan\.net\/travelcube\/(?!1d4a663|52e9bfc|29a6227|412c4ac|6ee35c4|13bf0bf|ab8692e|6858b1d).+@100w_100h/i then reject_img(200)
+request if ${url} ~= /^https?:\/\/p\d\.meituan\.net\/travelcube\/(?!c129a661)\w+\.gif/i then reject_img(200)
+
+# --- 内嵌高德 SDK 的 IP 直连广告调度 ---
+request if ${url} ~= /^http:\/\/59\.82\.113\.10\/amdc\/mobileDispatch\?appkey=213807/i then reject_dict(200)
+
+[MITM]
+hostname = 59.82.113.10, api.meituan.com, open.meituan.com, wmapi.meituan.com, www.meituan.com, p.meituan.com, apimobile.meituan.com, sqt.meituan.com, peisongapi.meituan.com, rms.meituan.com, portal-portm.meituan.com, awp-assets.meituan.net, s3plus.meituan.net, flowplus.meituan.net, img.meituan.net, w.meituan.net, p0.meituan.net, p1.meituan.net, p2.meituan.net

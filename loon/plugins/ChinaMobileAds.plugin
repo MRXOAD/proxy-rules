@@ -1,0 +1,26 @@
+#!name=中国移动去广告
+#!desc=移除中国移动开屏广告、弹窗广告、悬浮窗及探索页广告，精简首页与我的页面推广模块。更新规则后请重启应用两次。
+#!openUrl=https://apps.apple.com/app/id746284916
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(988)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/49/60/a8/4960a82a-0e58-1026-a010-1d9fd72b0823/AppIcon-0-0-1x_U007epad-0-1-0-0-sRGB-85-220.png/120x120bb.png
+
+[Rewrite]
+# 开屏、探索页广告、情感营销悬浮位：请求阶段整条拒绝。startInit 是 2026-09-30—10-02 日志里旧脚本唯一有执行的接口
+# （10 次完整启动每次都执行），fmz200、sooyaaabo 都整条拒绝它，这里照做，不在它上面跑解密。
+request if ${url} ~= /^https:\/\/client\.app\.coc\.10086\.cn\/biz-orange\/DN\/(?:init\/startInit|explorePage\/getAdverList|emotionMarket\/getEmotionMarketNew)(?:\?.*)?$/i then reject(200)
+# 掉落广告、首页弹窗排序、toast、直播悬浮球：回空对象
+request if ${url} ~= /^https:\/\/client\.app\.coc\.10086\.cn\/biz-orange\/(?:DN\/(?:dropsAdverService\/getDropsAdverNew|homepagePopup\/getSortInfo|toast\/getToastRule)|DH\/toast\/august\/getToast|DA\/liveSuspension\/getPageCode)(?:\?.*)?$/i then reject_dict(200)
+# 弹窗详情（原已转换插件留下的唯一一条）
+request if ${url} ~= /^https:\/\/h\.app\.coc\.10086\.cn\/biz-orange\/DH\/popupWindow\/getDetail(?:\?.*)?$/i then reject(200)
+
+[Script]
+# 首页楼层、首页聚合（下拉二楼、弹窗、悬浮位）、「我的」页：响应是 AES 密文并带 r-token 签名，jq 改不了。
+# ChinaMobileAds.js 解密后只删清单里的广告楼层，再加密重签；x-pen、签名或解密任何一项与预期不符就原样放行，
+# 脚本日志记一行「ChinaMobileAds <接口> <结果>」，并最多每 3 天通知一次。$crypto.aes 需要 Loon Build ≥ 988。
+response if ${url} ~= /^https:\/\/client\.app\.coc\.10086\.cn\/biz-orange\/DN\/(?:homePage\/getTopAreaList|multipleInterfaces\/aggregationData|myPageNew\/getMyPageNew)(?:\?.*)?$/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/ChinaMobileAds.js") with tag="中国移动页面净化", timeout=10, requires_body=true
+
+[MITM]
+hostname = client.app.coc.10086.cn, h.app.coc.10086.cn

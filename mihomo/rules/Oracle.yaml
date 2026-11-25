@@ -1,0 +1,14 @@
+# Oracle 云业务新加坡出口 分流规则（mihomo classical 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Oracle 自维护
+# TOTAL: 9
+payload:
+  - DOMAIN,oc-cx-en.custhelp.com
+  - DOMAIN,secureacceptance.cybersource.com
+  - DOMAIN,store-oracle.custhelp.com
+  - DOMAIN-SUFFIX,oci.customer-oci.com
+  - DOMAIN-SUFFIX,ocir.io
+  - DOMAIN-SUFFIX,oracle.com
+  - DOMAIN-SUFFIX,oraclecloud.com
+  - DOMAIN-SUFFIX,oraclecloudapps.com
+  - DOMAIN-SUFFIX,oracleimg.com

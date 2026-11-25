@@ -1,0 +1,34 @@
+#!name=农行去广告
+#!desc=移除中国农业银行开屏广告、浮窗与弹窗广告图、首页已核横幅及商城弹窗；保留 mPaaS 主网关与离线包域不解密。
+#!openUrl=https://apps.apple.com/app/id516139652
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/14/1f/68/141f68e4-112d-40de-0e7a-d1c188d0ce41/AppIcon-Release-1x_U007emarketing-0-6-0-sRGB-85-220-0.png/120x120bb.png
+
+[Rule]
+# 2026-11-23：四条已同步至 rules/本地补充/Reject.list（确保家里 XY:direct 同样生效）；插件内保留以便单插件自持。
+# mb.cdn-static.abchina.com.cn 经 2026-09-24 实测为 mPaaS 离线包与登录页资源，不整域拒绝。
+DOMAIN,imc.abchina.com.cn,REJECT
+DOMAIN,apm.abchina.com.cn,REJECT
+DOMAIN,msmp.abchina.com.cn,REJECT
+DOMAIN,firefly.abchina.com.cn,REJECT
+
+[Rewrite]
+# 2026-11-12 Debug 日志 + 原图复核：两张视频广告卡、特卖与寄件横幅。救灾横幅同尺寸，按路径放行。
+request if ${url} ~= /^https:\/\/midc\.cdn-static\.abchina\.com\.cn\/distributecenterimg\/file\/download\/(?:a8d4b658ddbd4b27ad8b8081daf4775a9900032820261110|b6791440ef184e668e348c7f83709ce29900032820261110|a969b943e618431ea173708805cfb5819900032820261030|a143b33e8ae749b19d3225997f14d9b39900032820261102)(?:\?[^#]*)?$/i then reject_img(200)
+# 2026-11-18 补：商城弹窗广告接口（R-Store abc）。此前只处理静态素材，这个接口下发弹窗配置本身，未覆盖。
+request if ${url} ~= /^https:\/\/mall\.abchina\.com\.cn\/pips\/EbizccmClientServer\/PIPSPopupAdvertisement/i then reject_dict(200)
+
+[Script]
+# 2026-11-23：开屏比例上限扩至 2.25，补 R-Store 窄比例浮窗（1.11–1.12）与弹窗（1.25–1.26）回 204；
+# 同步覆盖 11-23 日志并发请求的 mb-mbc 图片服务 /image-server/getImage，及 fmz200 披露且 DNS 在线的
+# 营销引擎 CDN enjoy.cdn-static.abchina.com(.cn)/yx-engine-web/file/download/*（按尺寸比例过滤，不盲拦前缀）。
+# 横幅比例（0.68–0.70）暂不盲拦；mode=log 保留未命中图尺寸日志供 Debug 复核。
+response if ${url} ~= /^https:\/\/midc\.cdn-static\.abchina\.com\.cn\/distributecenterimg\/file\/download\/[^\/?#]+(?:\?[^#]*)?$/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "mode=log&splash_range=720x1280:1.75-2.25&ad_ranges=180x200:1.11-1.12,570x700:1.25-1.26") with tag="农行开屏竖图", timeout=10, requires_body=true, binary_body_mode=true
+response if ${url} ~= /^https:\/\/mb-mbc\.cdn-static\.abchina\.com\.cn\/image-server\/getImage(?:[\/?][^#]*)?$/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "mode=log&splash_range=720x1280:1.75-2.25&ad_ranges=180x200:1.11-1.12,570x700:1.25-1.26") with tag="农行图片广告", timeout=10, requires_body=true, binary_body_mode=true
+response if ${url} ~= /^https:\/\/enjoy\.cdn-static\.abchina\.com(?:\.cn)?\/yx-engine-web\/file\/download\/[^\/?#]+(?:\?[^#]*)?$/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "mode=log&splash_range=720x1280:1.75-2.25&ad_ranges=180x200:1.11-1.12,570x700:1.25-1.26") with tag="农行营销图片", timeout=10, requires_body=true, binary_body_mode=true
+
+[MITM]
+hostname = midc.cdn-static.abchina.com.cn, mb-mbc.cdn-static.abchina.com.cn, enjoy.cdn-static.abchina.com, enjoy.cdn-static.abchina.com.cn, mall.abchina.com.cn

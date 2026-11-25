@@ -1,0 +1,34 @@
+#!name=浦发去广告
+#!desc=移除浦发银行及浦大喜奔开屏广告、弹窗广告与首页推荐推广。
+#!openUrl=https://apps.apple.com/app/id416695932
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7b/13/19/7b13190b-95d7-77f3-d15b-f2b95c1e6619/AppIcon-1x_U007emarketing-0-9-0-0-sRGB-85-220-0.png/120x120bb.png
+
+[Rewrite]
+# 2026-11-18 从广告重写迁回：此前这四条挂在 AdRewrite 的本地补充里，独立插件并没有真正自持——
+# 关掉 AdRewrite 就只剩本轮新增的两条。插件自持后，关掉本插件即浦发完全恢复原状。
+# 浦大喜奔开屏广告列表与物料预加载（2026-09-21）
+request if ${url} ~= /^https:\/\/lban\.spdb\.com\.cn\/mspmk-web-component\/(?:getAdvList|prefetchAdvList)\.ah/i then reject(200)
+# 2026-09-23 浦发手机银行（UA PNCBank）实测改用 getAdvertisementList 取广告列表，旧的 getAdvList 已不再请求。
+# 同主机的 getRecommendStrategyList / 用户标签等接口用途不明，不收。
+request if ${url} ~= /^https:\/\/lban\.spdb\.com\.cn\/mspmk-web-component\/getAdvertisementList\.ah/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/lban\.spdb\.com\.cn\/mspmk-web-component\/getPopup\.ah/i then reject_dict(200)
+# 浦发首页智能推荐广告列表
+request if ${url} ~= /^https:\/\/lban\.spdb\.com\.cn\/mspmk-web-component\/GetIntelRecommendAdvList\.ah/i then reject_dict(200)
+# 浦发冷启动第一个调用的营销接口（预取版位配置，冷启动只调一次），疑为开屏 / 弹窗缓存来源。22:09 日志命中后使用者未再报浦发广告；首页功能缺失即撤。
+request if ${url} ~= /^https:\/\/lban\.spdb\.com\.cn\/mspmk-web-component\/prefetchSlotSettingList\.ah/i then reject_dict(200)
+# 2026-09-24 12:03 日志（浦发 15.2.1，使用者反馈又有广告）：冷启动不再调 prefetchSlotSettingList（0 次），改为并发 23 次 getSlotSettingAndCompParamsWithKey 取各版位配置，
+# 响应体仍加密，只能整接口拒；试拦，首页功能组件缺失即撤。getRecommendStrategyList（首页各组件取推荐，冷启动 42 次）仍不动。
+request if ${url} ~= /^https:\/\/lban\.spdb\.com\.cn\/mspmk-web-component\/getSlotSettingAndCompParamsWithKey\.ah/i then reject_dict(200)
+# 2026-11-18 补：浦发网页助手端开屏接口（fmz200 SPDBank、R-Store spdb 均有）。此前只拦了 lban 营销组件，
+# 网页助手容器（wap.spdb.com.cn）的开屏单独一个接口，是本插件此前的漏口。
+request if ${url} ~= /^https:\/\/wap\.spdb\.com\.cn\/mspmk-web-homeassist\/OpenScreenAdv\.ah/i then reject_dict(200)
+
+[Script]
+response if ${url} ~= /^https:\/\/images?\.spdbccc\.com\.cn\/.+/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "mode=splash") with tag="浦大喜奔开屏尺寸拦截", timeout=10, requires_body=true, binary_body_mode=true
+
+[MITM]
+hostname = lban.spdb.com.cn, wap.spdb.com.cn, image.spdbccc.com.cn, images.spdbccc.com.cn

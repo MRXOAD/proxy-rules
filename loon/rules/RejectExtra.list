@@ -1,0 +1,8 @@
+# 补充拒绝（Loon 专用） 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Loon-only reject
+# TOTAL: 2
+# 用途与范围：仅 Loon 使用的补充拒绝，包括用户指定的富途采集主机及异常主机名。
+
+DOMAIN,/ugreen/v1/verify/heartbeat
+DOMAIN,collect.futunn.com

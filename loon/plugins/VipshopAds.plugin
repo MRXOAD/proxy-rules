@@ -1,0 +1,28 @@
+#!name=唯品会去广告
+#!desc=移除唯品会开屏广告、首页及详情页弹窗、右下角悬浮窗与我的页面推广流。
+#!openUrl=https://apps.apple.com/app/id417200582
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/33/95/d9/3395d9a3-49fc-ce87-1bd7-a7cc59b36a79/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 开屏广告素材图
+request if ${url} ~= /^https?:\/\/b\.appsimg\.com\/upload\/momin(?:\/|[?]|$)/i then reject(404)
+
+# 开屏广告配置
+request if ${url} ~= /^https?:\/\/mapi\.appvipshop\.com\/vips-mobile\/rest\/activity\/advertisement\/get/i then reject(200)
+
+# App 与小程序共用的弹窗广告
+request if ${url} ~= /^https?:\/\/mapi\.appvipshop\.com\/vips-mobile\/rest\/layout\/productList\/eventData\/v\d+\/?(?:\?[^#]*)?$/i then reject(200)
+
+# 右下角悬浮窗与优惠券浮层入口
+request if ${url} ~= /^https?:\/\/mapi\.appvipshop\.com\/vips-mobile\/rest\/activity\/float_ball\/get\/?(?:\?[^#]*)?$/i then reject(200)
+request if ${url} ~= /^https?:\/\/mapi\.appvipshop\.com\/vips-mobile\/rest\/activity\/coupon\/float_entrance\/get\/?(?:\?[^#]*)?$/i then reject(200)
+
+# 开屏广告曝光上报
+request if ${url} ~= /^https?:\/\/mapi\.appvipshop\.com\/vips-mobile\/rest\/iosAdInfo\/report/i then reject(200)
+
+[MITM]
+hostname = b.appsimg.com, mapi.appvipshop.com

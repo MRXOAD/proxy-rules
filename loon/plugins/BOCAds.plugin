@@ -1,0 +1,21 @@
+#!name=中国银行去广告
+#!desc=移除中国银行开屏广告及首页推广横幅。
+#!openUrl=https://apps.apple.com/app/id399608199
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ab/3d/e8/ab3de89e-da2c-a784-2e67-8415a90383d7/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/120x120bb.png
+
+[Rule]
+# 埋点域，整域拒绝（R-Store boc）
+DOMAIN,iisp-oidea.mbs.boc.cn,REJECT
+DOMAIN,iisp.mbs.boc.cn,REJECT
+
+[Rewrite]
+# 开屏广告图：advertType 目录只放广告素材，换透明图避免出现占位框
+request if ${url} ~= /^https?:\/\/mbs\.boc\.cn\/ubas-mgateway-static\/images\/advertType\/[^?#]+\.(?:jpe?g|png|gif|webp)(?:\?[^#]*)?$/i then reject_img(200)
+request if ${url} ~= /^https?:\/\/cdn1\.mbs\.boc\.cn\/ubas-mgateway-static\/images\/advertType\/[^?#]+\.(?:jpe?g|png|gif|webp)(?:\?[^#]*)?$/i then reject_img(200)
+
+[MITM]
+hostname = mbs.boc.cn, cdn1.mbs.boc.cn

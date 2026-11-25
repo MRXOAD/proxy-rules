@@ -1,0 +1,14 @@
+# Spotify（先直连后 FINAL） 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD local Spotify
+# TOTAL: 8
+# 用途与范围：Spotify 音频与图片 CDN；不含账户主站整域。
+
+DOMAIN,audio-ak-spotify-com.akamaized.net
+DOMAIN,audio4-ak-spotify-com.akamaized.net
+DOMAIN,heads-ak-spotify-com.akamaized.net
+DOMAIN,heads4-ak-spotify-com.akamaized.net
+DOMAIN-SUFFIX,pscdn.co
+DOMAIN-SUFFIX,scdn.co
+DOMAIN-SUFFIX,spotifycdn.com
+DOMAIN-SUFFIX,spotifycdn.net

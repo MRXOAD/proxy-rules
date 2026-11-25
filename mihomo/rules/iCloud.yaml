@@ -1,0 +1,11 @@
+# iCloud 分流规则（mihomo classical 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD local iCloud
+# TOTAL: 6
+payload:
+  - DOMAIN-SUFFIX,gc.apple.com
+  - DOMAIN-SUFFIX,icloud.apple.com
+  - DOMAIN-SUFFIX,icloud.com
+  - DOMAIN-SUFFIX,iwork.apple.com
+  - DOMAIN-SUFFIX,mac.com
+  - DOMAIN-SUFFIX,me.com

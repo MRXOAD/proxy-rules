@@ -1,0 +1,6 @@
+# Apple US Account 分流规则（mihomo classical 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Apple US Account
+# TOTAL: 1
+payload:
+  - DOMAIN-SUFFIX,podcasts.apple.com

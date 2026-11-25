@@ -1,0 +1,45 @@
+#!name=小米系去广告
+#!desc=移除小米商城、米家、小米金融、小米运动健康及极米投影的开屏广告与首页推荐横幅。
+#!openUrl=https://apps.apple.com/app/id720278357
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/52/aa/e5/52aae52c-a0f6-2762-1bcf-8e3ec4da3e7b/AppIcon-0-1x_U007emarketing-0-6-0-0-85-220-0.png/512x512bb.jpg
+
+[Rewrite]
+# 小米商城 / 米家首页：banner 位、轮播、我的页标签、开屏横幅与实时资源位
+request if ${url} ~= /^https?:\/\/home\.mi\.com\/cgi-op\/api\/v\d\/recommendation/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/home\.mi\.com\/cgi-op\/api\/v\d\/resource\/realtime\/openingBanner/i then reject_dict(200)
+
+# 小米商城：导航页导航位与商城开屏
+request if ${url} ~= /^https?:\/\/shop-api\.retail\.mi\.com\/mtop\/navi\/(?:rec\/merge\/|skywheel\/mishop\/splash)/i then reject_dict(200)
+
+# 小米商城首页页面配置（含楼层广告位）
+request if ${url} ~= /^https?:\/\/shopapi\.io\.mi\.com\/mtop\/mf\/resource\/homePage\/pageConfig/i then reject(200)
+
+# 商城启动图素材（1170 宽）
+request if ${url} ~= /^https?:\/\/t1\.market\.xiaomi\.com\/thumbnail\/webp\/w1170q100\//i then reject(200)
+
+# 小米商城主接口开机启动响应（脚本按字段剔除，不整条拒绝）
+
+# 小米金融：开屏与广告位
+request if ${url} ~= /^https?:\/\/api\.jr\.mi\.com\/jr\/api\/splashScreen/i then reject(404)
+request if ${url} ~= /^https?:\/\/api\.jr\.mi\.com\/v\d\/adv\//i then reject(200)
+
+# 米家带屏设备与智能音箱的启动推广（注意：已装的可莉「小米音箱」插件管的是
+# info.mina.xiaoaisound.com，与这两个 mina.mi.com 主机不重叠，两处各管各的）
+request if ${url} ~= /^https?:\/\/hd\.mina\.mi\.com\/splashscreen\/alert/i then reject(200)
+request if ${url} ~= /^https?:\/\/info\.mina\.mi\.com\/advertise\/splash/i then reject(200)
+
+# 小米运动健康：各页面广告位与 App 启动图
+request if ${url} ~= /^https?:\/\/api-mifit\.huami\.com\/(?:discovery\/mi\/discovery\/\w+_ad|v1\/app\/startpages\.json)/i then reject(404)
+
+# 极米投影的开机广告（同属小米生态链，一并归入本插件）
+request if ${url} ~= /^https?:\/\/superapp\.xgimi\.com\/api\/v1\/app\/ad\/configs/i then reject(200)
+
+[Script]
+response if ${url} ~= /^https?:\/\/api\.m\.mi\.com\/v1\/app\/start/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-myBlockAds.js") with requires_body=true
+
+[MITM]
+hostname = home.mi.com, shop-api.retail.mi.com, shopapi.io.mi.com, t1.market.xiaomi.com, api.m.mi.com, api.jr.mi.com, hd.mina.mi.com, info.mina.mi.com, api-mifit.huami.com, superapp.xgimi.com

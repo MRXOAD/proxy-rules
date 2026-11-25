@@ -1,0 +1,9 @@
+# Hugging Face 美国优先 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD HuggingFace
+# TOTAL: 4
+
+DOMAIN-SUFFIX,hf.co
+DOMAIN-SUFFIX,hf.space
+DOMAIN-SUFFIX,huggingface.co
+DOMAIN-SUFFIX,huggingface.com

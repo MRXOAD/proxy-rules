@@ -1,0 +1,23 @@
+#!name=航旅纵横去广告
+#!desc=移除航旅纵横开屏广告及应用内广告卡片，保留首页与我的页面正常功能模块。
+#!openUrl=https://apps.apple.com/app/id533326286
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.3(1014)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f3/24/9f/f3249f91-f692-a1a4-ea79-df11a012566f/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/120x120bb.png
+
+[Rewrite]
+# 启动页与弃用广告接口（kelee、墨鱼同款，https 也命中）
+request if ${url} ~= /^https?:\/\/(discardrp|startup)\.umetrip\.com\/gateway\/api\/umetrip\/native/i then reject(404)
+# 广告图目录与开屏配置（R-Store Map Local 为 {} 200）
+request if ${url} ~= /^https?:\/\/img\.umetrip\.com\/fs\/advert\//i then reject(404)
+request if ${url} ~= /^https?:\/\/oss\.umetrip\.com\/fs\/advert\/polite/i then reject_dict(200)
+
+[Script]
+# xingjiu29/Umetrip 固定版本经网关分发；原生二进制响应按广告载荷及页面模块处理。
+# 只覆盖下面列明的主机，不对 user 等登录主机使用通配解密。
+response if ${url} ~= /^https?:\/\/(?:bkclient\.umetrip\.com\.cn|umerp\.umetrip\.com(?:\.cn)?|(?:home|umehome|sns|appmsg)\.umetrip\.com)\/gateway\/api\/umetrip\/native(?:\?.*)?$/i then script("https://raw.githubusercontent.com/xingjiu29/Umetrip/5b997e4daebe2eeaae7fe0ac02ec49e5ec122914/umetrip.js") with tag="航旅纵横页面净化", timeout=30, requires_body=true, binary_body_mode=true
+
+[MITM]
+hostname = discardrp.umetrip.com, startup.umetrip.com, img.umetrip.com, oss.umetrip.com, bkclient.umetrip.com.cn, umerp.umetrip.com, umerp.umetrip.com.cn, home.umetrip.com, umehome.umetrip.com, sns.umetrip.com, appmsg.umetrip.com

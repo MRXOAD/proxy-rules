@@ -1,0 +1,43 @@
+#!name=朴朴超市去广告
+#!desc=移除朴朴超市开屏广告、首页横幅、搜索热词与推荐、购物车换购提示及待收货悬浮窗，精简个人中心。
+#!openUrl=https://apps.apple.com/app/id1146232158
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d5/6e/02/d56e02cc-e573-d80f-5348-6fb3191c4886/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 搜索框热榜（纯广告清单，整条拒绝返回空对象）
+request if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/advertisement\/search_input_ranking/i then reject_dict(200)
+
+# 主页实惠卡横幅
+request if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/member_card\/index\/my/i then reject(200)
+
+# 待收货页右下角悬浮广告。两家上游路径不同（assets 与 account），两条都收
+request if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/assets\/discount\/order/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/account\/discount\/order/i then reject(404)
+
+# 购物车页换购推荐
+request if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/channel\/global_redeem\/top_tip\/v2/i then reject_dict(200)
+
+# 各类页面的商品推荐位
+request if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/recommendation\/hub\/interests\/products\/v2/i then reject_dict(200)
+
+# 个人主页会员标识
+request if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/member_card\/premium\/user_center/i then reject_dict(200)
+
+# 以下四项的响应里广告与商品混排，保留上游脚本按条目剔除：
+# 开屏素材预加载、开屏广告配置、首页横幅列表、订单列表换购位、结算页推荐、搜索热词、搜索框商品推荐
+
+[Script]
+response if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/app_resource\/resource_preload\/list_h5_resource/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-PupuSplashAds.js") with requires_body=true
+response if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/advertisement\/v1/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-PupuSplashAds.js") with requires_body=true
+response if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/banner\/v\d\?position/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-pupumarket.js") with tag="pupumarket", timeout=60, requires_body=true
+response if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/order\/orders\/list\/v4/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-PupuSplashAds.js") with requires_body=true
+response if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/order_settlement\/detail/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-PupuSplashAds.js") with requires_body=true
+response if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/search\/hot_keywords\/v3/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-PupuSplashAds.js") with requires_body=true
+response if ${url} ~= /^https?:\/\/j1\.pupuapi\.com\/client\/search\/hub\/search_box\/products\/v6/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite-PupuSplashAds.js") with requires_body=true
+
+[MITM]
+hostname = j1.pupuapi.com

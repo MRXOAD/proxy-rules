@@ -1,0 +1,12 @@
+# Zoom 美国优先 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Zoom
+# TOTAL: 6
+# 用途与范围：Zoom 已收录域名；会议媒体及企业自定义端点仍需真实客户端验证。
+
+DOMAIN-SUFFIX,zmcdn.net
+DOMAIN-SUFFIX,zoom.com
+DOMAIN-SUFFIX,zoom.us
+DOMAIN-SUFFIX,zoomcdn.com
+DOMAIN-SUFFIX,zoomdev.us
+DOMAIN-SUFFIX,zoomgov.com

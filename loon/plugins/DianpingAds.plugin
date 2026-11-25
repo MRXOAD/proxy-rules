@@ -1,0 +1,40 @@
+#!name=大众点评去广告
+#!desc=移除大众点评开屏广告、首页营销模块、购物广告位及发布页与榜单推广。
+#!openUrl=https://apps.apple.com/app/id351091731
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/64/af/23/64af23fe-9ad0-665e-a65f-7bf5622f4efd/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/120x120bb.jpg
+
+[Rule]
+AND,((DOMAIN,mapi.dianping.com),(PROTOCOL,QUIC)),REJECT
+
+[Rewrite]
+# --- 开屏 ---
+# IP 直连的素材拉取（不走域名，单独一条）
+request if ${url} ~= /^https?:\/\/103\.37\.155\.60\/fetch/i then reject(404)
+request if ${url} ~= /^https?:\/\/catdot\.dianping\.com\/broker-service\/hijack/i then reject(404)
+request if ${url} ~= /^https?:\/\/mapi\.dianping\.com\/mapi\/operating\/(?:indexopsmodules|loadsplashconfig)(?:\?|$)/i then reject(404)
+
+# --- 首页智能模块与预加载预测 ---
+request if ${url} ~= /^https?:\/\/mapi\.dianping\.com\/mapi\/intelliindex(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/mapi\.dianping\.com\/wdrpreload\/userprediction(?:\?|$)/i then reject(404)
+request if ${url} ~= /^https?:\/\/mapi\.dianping\.com\/adshopping(?:\?|$)/i then reject(404)
+
+# --- 开屏素材 ---
+# img.meituan.net 与美团共用，但 goodsawardpic 是点评开屏专属，只在本插件管
+request if ${url} ~= /^https?:\/\/img\.meituan\.net\/goodsawardpic\/[a-f0-9]+\.(?:gif|png\.webp)(?:\?|$)/i then reject_img(200)
+# ddplus 是点评独有的素材下发通道
+request if ${url} ~= /^https?:\/\/ddplus\.meituan\.net\/v\d+\/mss_\w+\/(?:ehc|titansx|ddblue|edfu)\//i then reject(404)
+
+# --- 发布页与榜单的推广位 ---
+request if ${url} ~= /^https?:\/\/www\.dpfile\.com\/app\/fecommonservice-lottie\/ugc-write-done\/media/i then reject(404)
+request if ${url} ~= /^https?:\/\/www\.dpfile\.com\/picasso\/picasso-qa\/src\/AnswerList\/AnswerList-bundle/i then reject(404)
+request if ${url} ~= /^https?:\/\/www\.dpfile\.com\/sc\/indexpromotion/i then reject(404)
+
+# --- 埋点上报（POI 详情页转化统计）---
+request if ${url} ~= /^https?:\/\/catfront\.dianping\.com\/api\/metric\?v=\d+&p=rn_gcbu_mrn-joy-poidetail/i then reject(404)
+
+[MITM]
+hostname = 103.37.155.60, catdot.dianping.com, catfront.dianping.com, mapi.dianping.com, img.meituan.net, www.dpfile.com, ddplus.meituan.net

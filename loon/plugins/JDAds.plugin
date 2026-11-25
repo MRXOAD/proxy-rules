@@ -1,0 +1,73 @@
+#!name=京东去广告
+#!desc=移除京东、京东金融与京东读书开屏广告，移除首页楼层推广、信息流广告、订单页广告、搜索热词及升级弹窗，精简我的页面。
+#!openUrl=https://apps.apple.com/app/id414245413
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ba/ae/95/baae952e-c408-d213-b249-fb4755687ac4/AppIcon-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.jpg
+
+[Rule]
+# 京东内部调试上报域（32 位随机子域前缀的诊断接口）。原可莉版用 URL-REGEX 精确匹配，
+# 这里保持同一写法，不整域拒绝，避免影响京东其他调试域
+URL-REGEX,"^http:\/\/\w{32}\.jddebug\.com\/diagnose\?",REJECT
+
+AND,((DOMAIN,api.m.jd.com),(PROTOCOL,QUIC)),REJECT
+
+[Rewrite]
+# 首页搜索框热词、站点下拉、统一推荐位
+request if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=(searchBoxWord|stationPullService|uniformRecommend[06])/i then reject_dict(200)
+
+# 首页楼层配置里的广告槽（与上一条同一主机、不同 functionId，上游分两条写以区分动作）
+request if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?(?:[^#]*&)?functionId=queryMaterialAdverts(?:&|$)/i then reject_dict(200)
+
+# 首页启动配置整体下发
+request if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?(?:[^#]*&)?functionId=home_launchConfig(?:&|$)/i then reject(200)
+
+# 基础配置里的 websocket 监控与 httpdns 开关，关掉可减少常驻连接
+response if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=basicConfig/i then response.json.replace(["data.JDMessage.socketmonitor.isSocketEstablishedAhead", "data.JDMessage.socketmonitor.isSocketReport", "data.JDHttpToolKit.httpdns.httpdns"], [0, 0, 0])
+
+# 轻量版广告对象与推送数据，只删字段不动整包
+response if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?(?:[^#]*&)?functionId=lite_advertising(?:&|$)/i then response.json.jq("if type != \"object\" then . else del(.jdLiteAdvertisingVO) | if (.data | type) == \"object\" then del(.data.jdLiteAdvertisingVO) else . end end")
+response if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?(?:[^#]*&)?functionId=lite_SmartPush(?:&|$)/i then response.json.jq("if type == \"object\" then del(.pushData) | if (.data | type) == \"object\" then del(.data.pushData) else . end else . end")
+
+# 首页各楼层、我的页、订单列表与订单跟踪里的广告条目，用脚本按条目剔除
+
+# 新版开屏：不带 functionId 的 POST 请求，脚本按 encoded-splash 模式处理
+
+# 其余首页楼层槽位（zirawell 收录，可莉版未覆盖）
+request if ${url} ~= /^https?:\/\/api\.m\.jd\.com\/client\.action\?functionId=(?:getWidget|widget|hybrid|jdDiscoveryRedPoint|apollo_style|jdaPreDownload|xview2Config)/i then reject_dict(200)
+
+# 强制更新与版本升级弹窗
+request if ${url} ~= /^https?:\/\/api\.m\.jd\.com\/(?:openUpgrade|api\/appPublishUpgrade)/i then reject(404)
+# 首页下拉刷新下发的启动图与信息流种子
+request if ${url} ~= /^https?:\/\/api\.smart\.jd\.com\/c\/service\/getLoadingLinks/i then reject(200)
+
+# 热更新包、动态配置、占位图、xview 与购物车彩蛋入口
+request if ${url} ~= /^https?:\/\/storage\.360buyimg\.com\/(?:app\.m\.jd\.com\/lottie|dynamicConfig\/binary|occupy-home\/|xview|appcartsoa\/client\/cart_egg_entry)/i then reject(404)
+# 营销任务脚本包（zirawell 收录的 jdt_ 前缀目录，只在 storage.jd.com 下）
+request if ${url} ~= /^https?:\/\/storage\.jd\.com\/ti-pythontask\/JD\/jdt_/i then reject(404)
+# 开机启动图与首页大图素材（1125x2436 是 iPhone 开屏尺寸）
+request if ${url} ~= /^https?:\/\/m\.360buyimg\.com\/mobilecms\/s1125x2436_jfs\//i then reject(200)
+
+# 京东 App 编号图床上的广告目录
+request if ${url} ~= /^https?:\/\/img\d+\.360buyimg\.com\/jddjadvertise\//i then reject(404)
+# 京东读书开屏模组与弹窗
+request if ${url} ~= /^https?:\/\/jdread-api\.jd\.com\/jdread\/api\/(?:channel\/module\/opens|popup)/i then reject(200)
+
+# 商品详情页营销推荐规则
+request if ${url} ~= /^https?:\/\/lop-proxy\.jd\.com\/queryAppHomePageMarketingRecommendRuleConfigInfo/i then reject(200)
+
+# 京东金融启动图与广告位
+request if ${url} ~= /^https?:\/\/ms\.jr\.jd\.com\/gw\/generic\/aladdin\/(?:new)?na\/m\/getLoadingPicture/i then reject(200)
+request if ${url} ~= /^https?:\/\/ms\.jr\.jd\.com\/gw\/generic\/base\/(?:new)?na\/m\/adInfo/i then reject(404)
+
+# 京东自有广告投放域，adx 路径只承载竞价广告素材
+request if ${url} ~= /^https?:\/\/(?:bdsp-x|dsp-x)\.jd\.com\/adx\//i then reject_dict(200)
+
+[Script]
+response if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?(?:[^#]*&)?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start(?:up)?|welcomeHome)(?:&|$)/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/KeLee-JD_remove_ads.js") with tag="移除京东广告", requires_body=true
+response if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action(?:\?(?![^#]*[?&]functionId=|functionId=)[^#]*)?$/i && ${request.method} == "POST" then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/KeLee-JD_remove_ads.js", "encoded-splash") with tag="京东新版开屏", requires_body=true, timeout=10
+
+[MITM]
+hostname = api.m.jd.com, api.smart.jd.com, jdread-api.jd.com, lop-proxy.jd.com, m.360buyimg.com, storage.360buyimg.com, img0.360buyimg.com, img1.360buyimg.com, img2.360buyimg.com, storage.jd.com, ms.jr.jd.com, bdsp-x.jd.com, dsp-x.jd.com

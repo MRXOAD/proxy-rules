@@ -1,0 +1,16 @@
+#!name=Twitch去广告
+#!desc=移除Twitch直播流广告，支持自定义去广告代理节点地址。
+#!openUrl=https://apps.apple.com/app/id460177396
+#!author=Yswag
+#!tag=去广告
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ac/6e/fe/ac6efeff-c9ff-0262-9559-b063412bac53/TwitchAppIcon-0-0-1x_U007epad-0-1-0-sRGB-0-0-0-85-220.png/120x120bb.png
+
+[Argument]
+luminous=input, "https://twitch.zzls.xyz", tag=代理实例地址, desc=填写Twitch去广告代理实例地址
+
+[Script]
+response if ${url} ~= /https:\/\/usher.ttvnw.net\/(api\/channel\/hls|vod)/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/converted/scripts/twitchAdBlock.js", {${luminous}}) with tag="移除Twitch广告", requires_body=true
+
+[MITM]
+hostname = usher.ttvnw.net

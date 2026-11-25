@@ -1,0 +1,33 @@
+# Copilot 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD local Copilot
+# TOTAL: 27
+# 用途与范围：Microsoft Copilot 独立入口、Cowork 运行域及 GitHub Copilot 专用 API/报告依赖。
+
+DOMAIN,copilot-proxy.githubusercontent.com
+DOMAIN,copilot-reports.github.com
+DOMAIN,copilot-telemetry-service.githubusercontent.com
+DOMAIN,copilot-telemetry.githubusercontent.com
+DOMAIN,copilot-workspace.githubnext.com
+DOMAIN,copilotprodattachments.blob.core.windows.net
+DOMAIN,default.exp-tas.com
+DOMAIN,edgeservices.bing.com
+DOMAIN,origin-tracker.githubusercontent.com
+DOMAIN,production-copilot-host-austriaeast.webpubsub.azure.com
+DOMAIN,production-copilot-host-centralus-02.webpubsub.azure.com
+DOMAIN,production-copilot-host-centralus.webpubsub.azure.com
+DOMAIN,production-copilot-host-eastasia.webpubsub.azure.com
+DOMAIN,production-copilot-host-westus.webpubsub.azure.com
+DOMAIN,production-copilot-host-westus3.webpubsub.azure.com
+DOMAIN,production-copilot-host.webpubsub.azure.com
+DOMAIN,sydney.bing.com
+DOMAIN-SUFFIX,copilot-stg.com
+DOMAIN-SUFFIX,copilot.ai
+DOMAIN-SUFFIX,copilot.cloud.microsoft
+DOMAIN-SUFFIX,copilot.com
+DOMAIN-SUFFIX,copilot.microsoft.com
+DOMAIN-SUFFIX,gateway.prod.island.powerapps.com
+DOMAIN-SUFFIX,githubcopilot.com
+DOMAIN-SUFFIX,m365copilot.com
+DOMAIN-KEYWORD,copilot-reports-
+DOMAIN-KEYWORD,usagereports

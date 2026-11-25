@@ -1,0 +1,11 @@
+# Apple Intelligence 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD local Apple Intelligence
+# TOTAL: 5
+# 用途与范围：Apple 智能中继及已登记地区判断精确主机；不包含整个定位和地图父域。
+
+DOMAIN,apple-relay.apple.com
+DOMAIN,apple-relay.cloudflare.com
+DOMAIN,apple-relay.fastly-edge.com
+DOMAIN,cp4.cloudflare.com
+DOMAIN,gspe1-ssl.ls.apple.com

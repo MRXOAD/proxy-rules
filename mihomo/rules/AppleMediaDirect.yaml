@@ -1,0 +1,15 @@
+# Apple Media Direct 分流规则（mihomo classical 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Apple Media Direct
+# TOTAL: 10
+payload:
+  - DOMAIN,aod.itunes.apple.com
+  - DOMAIN,apps-mzstatic-cdn.itunes-apple.com.akadns.net
+  - DOMAIN,audio-ssl.itunes.apple.com
+  - DOMAIN,iosapps.itunes.apple.com
+  - DOMAIN,is-ssl.mzstatic.com-cn-lb.itunes-apple.com.akadns.net
+  - DOMAIN,is-ssl.mzstatic.com.itunes-apple.com.akadns.net
+  - DOMAIN,mvod.itunes.apple.com
+  - DOMAIN,osxapps.itunes.apple.com
+  - DOMAIN,streamingaudio.itunes.apple.com
+  - DOMAIN-SUFFIX,shazam.com

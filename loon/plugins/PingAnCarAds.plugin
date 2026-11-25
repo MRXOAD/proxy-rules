@@ -1,0 +1,19 @@
+#!name=平安好车主去广告
+#!desc=移除平安好车主首页弹窗、顶部弹窗、营销引导及广告素材包。
+#!openUrl=https://apps.apple.com/app/id796339836
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ad/ac/18/adac18c9-e52d-6e7f-e050-e1f50d606009/AppIcon-1x_U007ephone-0-1-0-sRGB-85-220-0.png/120x120bb.jpg
+
+[Rewrite]
+# 2026-11-24（R-Store pinganhcz.conf）：广告素材包、首页弹窗与营销引导接口
+request if ${url} ~= /^https?:\/\/iobs\.pingan\.com\.cn\/download\/bweb-per-sf-prd\/bweb/i then reject(200)
+request if ${url} ~= /^https?:\/\/iobs\.pingan\.com\.cn\/download\/icore-aops-base-dmz-prd\/(?:YourSystemName|icore-apps-ad)/i then reject(200)
+request if ${url} ~= /^https?:\/\/hcz-member\.pingan\.com\.cn\/micro-api\/homepage\/do\/app\/popbox\/getTopPopBox/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/hcz-member\.pingan\.com\.cn\/micro-api\/micro-cps-ceps-app\/box\/queryHomePagePopBox/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/maam\.pingan\.com\.cn\/maam\/plugin\/getMarketGuideInfo/i then reject_dict(200)
+
+[MITM]
+hostname = iobs.pingan.com.cn, hcz-member.pingan.com.cn, maam.pingan.com.cn

@@ -1,0 +1,55 @@
+# WeChat 分流规则（mihomo classical 格式）
+# 维护：MRXOAD
+# 来源：blackmatrix7 WeChat Clash + MRXOAD precise WeChat supplement
+# TOTAL: 50
+payload:
+  - DOMAIN,apd-pcdnwxlogin.teg.tencent-cloud.net
+  - DOMAIN,cdnimg.3g.qq.com
+  - DOMAIN,dldir1.qq.com
+  - DOMAIN,dldir1v6.qq.com
+  - DOMAIN,msfwifi.3g.qq.com
+  - DOMAIN,rdelivery.qq.com
+  - DOMAIN,soup.v.qq.com
+  - DOMAIN,vweixinf.tc.qq.com
+  - DOMAIN,weixin110.qq.com
+  - DOMAIN,wup.imtt.qq.com
+  - DOMAIN-SUFFIX,iot-tencent.com
+  - DOMAIN-SUFFIX,lbs.gtimg.com
+  - DOMAIN-SUFFIX,map.qq.com
+  - DOMAIN-SUFFIX,mmbizurl.cn
+  - DOMAIN-SUFFIX,qlogo.cn
+  - DOMAIN-SUFFIX,qpic.cn
+  - DOMAIN-SUFFIX,servicewechat.com
+  - DOMAIN-SUFFIX,tenpay.com
+  - DOMAIN-SUFFIX,up-hl.3g.qq.com
+  - DOMAIN-SUFFIX,vweixinthumb.tc.qq.com
+  - DOMAIN-SUFFIX,wechat.com
+  - DOMAIN-SUFFIX,wechatlegal.net
+  - DOMAIN-SUFFIX,wechatos.net
+  - DOMAIN-SUFFIX,wechatpay.cn
+  - DOMAIN-SUFFIX,wechatpay.com
+  - DOMAIN-SUFFIX,weixin.com
+  - DOMAIN-SUFFIX,weixin.qq.com
+  - DOMAIN-SUFFIX,weixin.qq.com.cn
+  - DOMAIN-SUFFIX,weixinbridge.com
+  - DOMAIN-SUFFIX,weixinsxy.com
+  - DOMAIN-SUFFIX,wx.gtimg.com
+  - DOMAIN-SUFFIX,wx.qq.com
+  - DOMAIN-SUFFIX,wxapp.tc.qq.com
+  - DOMAIN-SUFFIX,wxaurl.cn
+  - DOMAIN-SUFFIX,wxcloudrun.com
+  - DOMAIN-SUFFIX,wxgateway.com
+  - DOMAIN-SUFFIX,wxlivecdn.com
+  - DOMAIN-SUFFIX,wxmpurl.cn
+  - DOMAIN-SUFFIX,wxs.qq.com
+  - DOMAIN-SUFFIX,wxsnsdy.tc.qq.com
+  - DOMAIN-SUFFIX,yun-hl.3g.qq.com
+  - IP-CIDR,101.32.104.4/32,no-resolve
+  - IP-CIDR,101.32.104.41/32,no-resolve
+  - IP-CIDR,101.32.104.56/32,no-resolve
+  - IP-CIDR,101.32.118.25/32,no-resolve
+  - IP-CIDR,101.32.133.16/32,no-resolve
+  - IP-CIDR,101.32.133.209/32,no-resolve
+  - IP-CIDR,101.32.133.53/32,no-resolve
+  - IP-CIDR,129.226.107.244/32,no-resolve
+  - IP-CIDR,129.226.3.47/32,no-resolve

@@ -1,0 +1,7 @@
+# Loon 国内 DoH 端点 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Loon-only domestic DoH
+# TOTAL: 2
+
+DOMAIN,dns.alidns.com
+DOMAIN,doh.pub

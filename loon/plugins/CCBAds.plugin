@@ -1,0 +1,23 @@
+#!name=建行去广告
+#!desc=移除中国建设银行开屏广告、活动推广素材及企业中心定制广告。
+#!openUrl=https://apps.apple.com/app/id398127227
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ca/96/72/ca967282-961a-767e-9394-a4b3b7584e86/AppIcon-0-0-1x_U007ephone-0-1-0-sRGB-85-220.png/120x120bb.png
+
+[Rule]
+# 建行独立广告域，整域拒绝（R-Store ccb）
+DOMAIN-SUFFIX,adv.ccb.com,REJECT
+
+[Rewrite]
+# 开屏与活动广告图（imageadv 的 activity 目录只放广告素材）
+request if ${url} ~= /^https?:\/\/imageadv\.ccb\.com\/adpic\/sszserver\/upload\/activity\/\d{8}\/[^\/?#]+\.(?:gif|png|jpe?g)$/i then reject_img(200)
+# 新版活动页素材（image1 的 eBranch/check 下 activity 目录）
+request if ${url} ~= /^https?:\/\/image1\.ccb\.com\/newsinfo\/eBranch\/check\/(?:nf\/newfin\/activity|po\/poortheme\/activity)\/[^\/?#]+\.png$/i then reject_img(200)
+# 企业中心定制广告位，返回空对象
+request if ${url} ~= /^https?:\/\/cy\.cloud\.ccb\.com\/+gateway\/user-server\/user\/qyCenter\/getCustomizedAdv$/i then reject_dict(200)
+
+[MITM]
+hostname = imageadv.ccb.com, image1.ccb.com, cy.cloud.ccb.com

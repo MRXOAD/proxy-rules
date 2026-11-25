@@ -1,0 +1,21 @@
+#!name=CSDN去广告
+#!desc=移除开屏广告及频道列表启动推广。
+#!openUrl=https://apps.apple.com/app/id1437080054
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/7d/e9/ba/7de9baaf-f82e-487b-ccbe-5f43f5431e99/AppIcon-0-0-1x_U007emarketing-0-8-0-0-sRGB-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 首页开屏广告
+request if ${url} ~= /^https?:\/\/(?:app-gw|gw)\.csdn\.net\/cms-app\/v\d+\/home_page\/open_advertisement/i then reject(404)
+
+# 频道列表开屏广告
+request if ${url} ~= /^https?:\/\/app-gw\.csdn\.net\/silkroad-api\/api\/v\d\/assemble\/list\/pub\/channel\/app_open_screen_ad/i then reject(200)
+
+# AB 测试下发（广告开关与投放策略都在这里）
+request if ${url} ~= /^https?:\/\/app-gw\.csdn\.net\/abtesting\/v\d\/getList\?/i then reject_dict(200)
+
+[MITM]
+hostname = app-gw.csdn.net, gw.csdn.net

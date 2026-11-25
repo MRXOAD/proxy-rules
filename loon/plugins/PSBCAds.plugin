@@ -1,0 +1,17 @@
+#!name=邮储银行去广告
+#!desc=移除邮储银行及邮储信用卡活动营销推广素材。
+#!openUrl=https://apps.apple.com/app/id513142685
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3e/14/37/3e143736-e5c7-6231-4705-764fe8fe659f/AppIcon-0-0-1x_U007emarketing-0-6-0-sRGB-85-220.png/120x120bb.png
+
+[Rewrite]
+# 活动中心素材（mcc = marketing campaign center）
+request if ${url} ~= /^https?:\/\/mcc\.psbc\.com:9090\/mcc\/resources\/[^\/?#]+\.(?:jpe?g|png)(?:\?[^#]*)?$/i then reject_img(200)
+# 信用卡活动素材
+request if ${url} ~= /^https?:\/\/d\.psbc\.com:9091\/mcc\/resources\/[^\/?#]+\.(?:jpe?g|png)(?:\?[^#]*)?$/i then reject_img(200)
+
+[MITM]
+hostname = mcc.psbc.com:9090, d.psbc.com:9091

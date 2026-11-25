@@ -1,0 +1,33 @@
+#!name=腾讯视频去广告
+#!desc=拒绝腾讯视频广告与推送域名、贴片广告调度与广告分段流；因可莉上游停更且其 replace-body.js 已 404，改由本仓自维护且零外部脚本依赖。
+#!openUrl=https://apps.apple.com/app/id458318329
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/31/23/ea/3123eacb-c58b-0c39-ba46-39acda14dc32/AppIcon-0-0-1x_U007epad-0-1-0-0-sRGB-85-220.png/120x120bb.jpg
+
+[Rule]
+# 2026-11-24（R-Store txtv.list + 可莉有效域名规则）：纯广告、贴片调度与推送上报域
+DOMAIN,info4.video.qq.com,REJECT
+DOMAIN,info6.video.qq.com,REJECT
+DOMAIN,vv6.video.qq.com,REJECT
+DOMAIN,sdkconfig.video.qq.com,REJECT
+DOMAIN,activity.video.qq.com,REJECT
+DOMAIN,ios.video.mpush.qq.com,REJECT
+DOMAIN-SUFFIX,video.mpush.qq.com,REJECT
+DOMAIN-SUFFIX,video.wap.mpush.qq.com,REJECT
+DOMAIN-SUFFIX,video.ureport.push.qq.com,REJECT
+DOMAIN-SUFFIX,api.poll.video.qq.com,REJECT
+DOMAIN-SUFFIX,livep.l.ott.video.qq.com,REJECT
+DOMAIN-SUFFIX,news-l.play.ott.video.qq.com,REJECT
+DOMAIN-SUFFIX,vlive.qqvideo.tc.qq.com,REJECT
+
+[Rewrite]
+# 贴片广告调度与 CDN 广告分段（R-Store txtv.conf）
+request if ${url} ~= /^https?:\/\/vv\.video\.qq\.com\/(?:diff|get)vmind/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/apd-vlive\.apdcdn\.tc\.qq\.com\/vmind\.qqvideo\.tc\.qq\.com\/\w+/i then reject(200)
+request if ${url} ~= /^https?:\/\/apd-\w+\.v\.smtcdns\.com\/(?:defaultts|omts|vmind\.qqvideo)\.tc\.qq\.com\//i then reject(200)
+
+[MITM]
+hostname = vv.video.qq.com, apd-vlive.apdcdn.tc.qq.com, apd-*.v.smtcdns.com

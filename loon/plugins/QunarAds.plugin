@@ -1,0 +1,25 @@
+#!name=去哪儿去广告
+#!desc=移除去哪儿旅行开屏广告、首页动画标语、搜索框推广及小程序开屏广告。
+#!openUrl=https://apps.apple.com/app/id395096736
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9f/f0/31/9ff031e8-d92c-5b54-fb26-f7bddf3924b4/AppIcon-0-0-1x_U007epad-0-1-85-220.png/120x120bb.jpg
+
+[Rewrite]
+# 开屏：返回完整无广告结构（sdkAdSwitch/programmaticAd/shakeSwitch 全 false，展示次数 0）
+# 依据：ccyykk666/qunar_ad.lpx，2026-09-02 实测版
+response if ${url} ~= /^https:\/\/homefront\.qunar\.com\/front\/splash\/ad(?:\?.*)?$/i then response.body.mock("json", "{\"bstatus\":{\"code\":0,\"des\":\"成功\"},\"data\":{\"sdkAdSwitch\":false,\"programmaticAd\":false,\"shakeSwitch\":false,\"maxShowTimes\":0,\"sdkMaxShowTimes\":0}}", 200)
+
+# 预加载广告包（fmz200/Qunar.lpx）
+request if ${url} ~= /^https?:\/\/qde\.qunar\.com\/preload(?:\?|$)/i then reject(200)
+
+# 小程序端开屏位
+request if ${url} ~= /^https?:\/\/client\.qunar\.com\/pitcher-proxy\?qrt=p_splashAd/i then reject(404)
+
+# 首页动画标语与搜索框运营位：这两处是纯营销位，返回空对象不会影响页面结构
+request if ${url} ~= /^https?:\/\/slugger\.qunar\.com\/slugger-proxy\?(?:[^#]*&)?qrt=(?:qpub_animateSloganView|suggestion_operation_app)(?:&[^#]*)?$/i then reject_dict(200)
+
+[MITM]
+hostname = homefront.qunar.com, qde.qunar.com, client.qunar.com, slugger.qunar.com

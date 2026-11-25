@@ -1,0 +1,28 @@
+#!name=顺丰速运去广告
+#!desc=移除顺丰速运开屏广告、首页广告卡片与信息流推广、积分商城推广及更新提示。
+#!openUrl=https://apps.apple.com/app/id458505015
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/54/65/f6/5465f689-34cf-5264-f56c-00d517bc7dbd/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 首页广告位与信息流。上游两条（整目录 与 queryInfoFlow 单接口）宽窄互吞，
+# 合并为一条并取更安全的 reject_dict，返回空对象而非空响应体
+request if ${url} ~= /^https?:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/ad\//i then reject_dict(200)
+
+# 首页卡片配置：只删 position=2 的广告卡，其余卡片保留
+response if ${url} ~= /^https?:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/appHomeConfig\/query$/i then response.json.jq("if (try (.obj | type) catch null) == \"array\" then .obj |= map(select(.position != 2)) else . end")
+
+# 强制更新检查
+request if ${url} ~= /^https?:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/appVersion\/detectionUpgrade/i then reject(200)
+
+# 开屏闪屏
+request if ${url} ~= /^https?:\/\/shopic\.sf-express\.com\/crm\/mobile\/common\/flashscreen/i then reject(200)
+
+# 积分商城商品位（Kelee 独有，AdRewrite 未收）
+request if ${url} ~= /^https?:\/\/ucmp\.sf-express\.com\/proxy\/esgcempcore\/memberGoods\/pointMallService\/goodsList$/i then reject_dict(200)
+
+[MITM]
+hostname = ccsp-egmas.sf-express.com, shopic.sf-express.com, ucmp.sf-express.com

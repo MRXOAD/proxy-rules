@@ -1,0 +1,21 @@
+# MEXC 台湾出口 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD verified MEXC domains
+# TOTAL: 15
+# 用途与范围：MEXC 已核实的 7 个域名后缀和 8 个精确接入、资源/风控主机。
+
+DOMAIN,appconfig.mocortech.com
+DOMAIN,images.mocortech.com
+DOMAIN,public.mocortech.com
+DOMAIN,static.mocortech.com
+DOMAIN,trochilus-web.gotoda.co
+DOMAIN,watchman-sdk.gotoda.co
+DOMAIN,watchman.gotoda.co
+DOMAIN,www.coldbookfly.ru
+DOMAIN-SUFFIX,greentreeone.com
+DOMAIN-SUFFIX,mexc.co
+DOMAIN-SUFFIX,mexc.com
+DOMAIN-SUFFIX,mexc.fm
+DOMAIN-SUFFIX,mexc.link
+DOMAIN-SUFFIX,mexc.sg
+DOMAIN-SUFFIX,mexcsensors.com

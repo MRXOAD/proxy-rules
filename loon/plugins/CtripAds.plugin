@@ -1,0 +1,54 @@
+#!name=携程去广告
+#!desc=移除携程旅行开屏广告、应用内广告列表、启动更新弹窗及微信热事件推广。
+#!openUrl=https://apps.apple.com/app/id379395415
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d0/b0/51/d0b05172-fe05-4868-3e9b-616519565eca/AppIcon-0-0-1x_U007emarketing-0-5-0-85-220.png/120x120bb.jpg
+
+[Rule]
+# 埋点日志域（火山引擎日志，专用于上报，可莉与 blackmatrix7 同款收法）
+DOMAIN-SUFFIX,volceapplog.com,REJECT
+
+# 未收的域名级拒绝，以及原因：
+#   sofire.baidu.com            —— zirawell 收，但它是百度联盟通用域，[Rule] 全局生效，
+#                                  会波及其他百度系 App。该落地页的 URL 级规则 AdRewrite 已收录，本插件不重复。
+#   cn-shanghai.nlb.aliyuncs.com —— zirawell 收，但这是阿里云负载均衡的通用域名，
+#                                  整域拒绝会误伤大量无关 App，坚决不收。
+#   210.13.85.204 / 114.80.56.98 / 162.14.145.54 / 162.14.137.43 —— 来源不明，
+#                                  用途无法核实，按不臆造原则不收。
+
+[Rewrite]
+# --- 广告列表 ---
+# tripAds 与 getAdsList 覆盖 soa2 下全部版本号与 json/scjson/无前缀三种路径形态。
+# 用 reject_dict 返回 {} 而不是 reject(200)：8.47.0 之后空响应体会导致图片加载失败。
+request if ${url} ~= /^https?:\/\/m\.ctrip\.com\/restapi\/.*\/tripAds/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/m\.ctrip\.com\/restapi\/.*\/getAdsList/i then reject_dict(200)
+
+# --- 开屏素材像素 ---
+request if ${url} ~= /^https?:\/\/ma-adx\.ctrip\.com\/_ma\.gif/i then reject(200)
+
+# --- 启动弹窗与更新 ---
+# 接口名为取时区服务器 IP，实际被复用下发更新配置与公告弹窗
+# 依据：fmz200/Ctrip.lpx 与 zirawell/ctrip-App.lpx 两源独立确认
+request if ${url} ~= /^https?:\/\/m\.ctrip\.com\/restapi\/.*\/getTimeZoneServerIpList/i then reject(200)
+
+# --- 埋点与上传 ---
+request if ${url} ~= /^https?:\/\/m\.ctrip\.com\/restapi\/.*\/incrQueryTrans/i then reject(200)
+request if ${url} ~= /^https?:\/\/m\.ctrip\.com\/restapi\/.*\/getDiscardUbts/i then reject(200)
+
+# --- 推广位 ---
+# 微信热事件推广（blackmatrix7 广告总库、zirawell 小程序版同款）
+request if ${url} ~= /^https?:\/\/m\.ctrip\.com\/restapi\/.*\/queryWeChatHotEvent/i then reject(200)
+# App 全局配置：里面有开屏与营销位开关。返回 {} 让所有营销开关回落到默认，
+# 比空响应体安全。若更新后出现功能异常，先关这一条复测。
+request if ${url} ~= /^https?:\/\/m\.ctrip\.com\/restapi\/.*\/getAppConfig/i then reject_dict(200)
+# 广告滚动组件的脚本本体，拒绝后该组件不再挂载
+request if ${url} ~= /^https?:\/\/m\.ctrip\.com\/html5\/webresource\/js\/iscroll\.js$/i then reject(200)
+
+# --- 第三方联盟广告 ---
+# 百度联盟在携程里插入的落地页广告（fmz200 与 zirawell 同款）
+
+[MITM]
+hostname = m.ctrip.com, ma-adx.ctrip.com

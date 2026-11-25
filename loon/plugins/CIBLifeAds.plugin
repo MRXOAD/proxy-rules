@@ -1,0 +1,15 @@
+#!name=兴业生活去广告
+#!desc=移除兴业生活活动推广素材包。
+#!openUrl=https://apps.apple.com/app/id1151090612
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5a/5a/bf/5a5abf35-fe87-f263-bb7c-ae482601095d/AppIcon-1x_U007emarketing-0-8-0-sRGB-85-220-0.png/120x120bb.png
+
+[Rewrite]
+# 活动素材包（M01—M09 目录）
+request if ${url} ~= /^https?:\/\/file\.cibfintech\.com\/file\/M0[1-9]\/[^?#]+\.zip(?:\?[^#]*)?$/i then reject(200)
+
+[MITM]
+hostname = file.cibfintech.com

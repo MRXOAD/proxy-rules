@@ -1,0 +1,6 @@
+# collect 精确拒绝（Mihomo 侧） 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD collect exact reject
+# TOTAL: 1
+
+DOMAIN,collect.futunn.com

@@ -1,0 +1,9 @@
+# Oracle 注册验证精确例外 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Oracle 自维护
+# TOTAL: 3
+# 用途与范围：Oracle 注册/风控及同意偏好的已核精确功能入口。
+
+DOMAIN,consent.trustarc.com
+DOMAIN,consent.truste.com
+DOMAIN,h.online-metrix.net

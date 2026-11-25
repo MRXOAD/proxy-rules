@@ -1,0 +1,11 @@
+# Figma 美国优先 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Figma
+# TOTAL: 6
+
+DOMAIN-SUFFIX,figma.app
+DOMAIN-SUFFIX,figma.com
+DOMAIN-SUFFIX,figma.site
+DOMAIN-SUFFIX,figmausercontent.com
+DOMAIN-SUFFIX,figmaweave.com
+DOMAIN-SUFFIX,weavy.ai

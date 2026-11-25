@@ -1,0 +1,34 @@
+# Prime Video 美国/日本优先 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD PrimeVideo
+# TOTAL: 28
+# 用途与范围：Prime Video 主站及已收录资源；优先于 Amazon 通用表。
+
+DOMAIN,atv-ps.amazon.com
+DOMAIN,avodmp4s3ww-a.akamaihd.net
+DOMAIN,d1v5ir2lpwr8os.cloudfront.net
+DOMAIN,d22qjgkvxw22r6.cloudfront.net
+DOMAIN,d25xi40x97liuc.cloudfront.net
+DOMAIN,d27xxe7juh1us6.cloudfront.net
+DOMAIN,dmqdd6hw24ucf.cloudfront.net
+DOMAIN,images-eu.ssl-images-amazon.com
+DOMAIN,images-fe.ssl-images-amazon.com
+DOMAIN,images-na.ssl-images-amazon.com
+DOMAIN,msh.amazon.co.uk
+DOMAIN,static.siege-amazon.com
+DOMAIN-SUFFIX,aiv-cdn.net
+DOMAIN-SUFFIX,aiv-delivery.net
+DOMAIN-SUFFIX,amazonprimevideos.com
+DOMAIN-SUFFIX,amazonvideo.cc
+DOMAIN-SUFFIX,amazonvideo.com
+DOMAIN-SUFFIX,media-amazon.com
+DOMAIN-SUFFIX,prime-video.com
+DOMAIN-SUFFIX,primevideo.cc
+DOMAIN-SUFFIX,primevideo.com
+DOMAIN-SUFFIX,primevideo.info
+DOMAIN-SUFFIX,primevideo.org
+DOMAIN-SUFFIX,primevideo.tv
+DOMAIN-SUFFIX,pv-cdn.net
+DOMAIN-KEYWORD,avoddashs
+USER-AGENT,InstantVideo.US*
+USER-AGENT,Prime%20Video*

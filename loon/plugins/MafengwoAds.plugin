@@ -1,0 +1,43 @@
+#!name=马蜂窝去广告
+#!desc=移除马蜂窝开屏广告、首页横幅与信息流推广、笔记挂件及更新提示，精简我的页面。
+#!openUrl=https://apps.apple.com/app/id406057767
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/18/38/f6/1838f62a-db5a-071d-1166-d056a6a93d7b/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/120x120bb.jpg
+
+[Rewrite]
+# --- 开屏与广告目录 ---
+# 开屏广告列表：返回 dict 让 App 认为无开屏可播
+request if ${url} ~= /^https?:\/\/mapi\.mafengwo\.cn\/ad\/get_launch_ad_list/i then reject_dict(200)
+# 其余 ad 目录（含 travelguide 下的广告位）。放在开屏规则之后，避免抢走上面那条。
+request if ${url} ~= /^https?:\/\/mapi\.mafengwo\.cn\/(?:travelguide\/)?ad(?:\/|$)/i then reject(404)
+
+# --- 首页内容里的推广位（字段级，不整包拒绝）---
+# 发现流：只删 business_type 为 gdcpm 的推广条目，正常游记与攻略保留
+# 依据：可莉 MaFengWo_remove_ads.lpx 同款 jq
+response if ${url} ~= /^https:\/\/mapi\.mafengwo\.cn\/discovery\/get_index\/v7\?/i then response.json.jq("(if (try (.data.list | type) catch null) == \"array\" then .data.list |= map(select(.data.business_type != \"gdcpm\")) else . end)")
+
+# 首页头部：删每张卡里的 banners 数组
+response if ${url} ~= /^https:\/\/mapi\.mafengwo\.cn\/sales\/home\/get_header\/v3\?/i then response.json.jq("(if (try (.data.list | type) catch null) == \"array\" then .data.list[] |= ( .data |= del(.banners) ) else . end)")
+
+# --- 我的页（原由第三方脚本处理，此处改写为等价 jq）---
+# get_list：删掉 style 为 inspire 的推广条目（原脚本保留非 inspire 项，语义相同）
+response if ${url} ~= /^https:\/\/mapi\.mafengwo\.cn\/user\/profile\/get_list(?:\?|$)/i then response.json.jq("(if (try (.data.list | type) catch null) == \"array\" then .data.list |= map(select(.style != \"inspire\")) else . end)")
+
+# get_profile：关掉打卡提醒引导
+response if ${url} ~= /^https:\/\/mapi\.mafengwo\.cn\/user\/profile\/get_profile(?:\?|$)/i then response.json.jq("(if (try (.data.user_info.daka_guide_info | type) catch null) == \"object\" then .data.user_info.daka_guide_info |= (.is_show_tip = 0 | .tip = \"\") else . end)")
+
+# --- 营销引导与挂件 ---
+# 成长值提示
+request if ${url} ~= /^https:\/\/mapi\.mafengwo\.cn\/user\/growth\/get_growth_tip\/v1\?/i then reject_dict(200)
+# 笔记挂件（信息流里的第三方推广位）
+request if ${url} ~= /^https?:\/\/mapi\.mafengwo\.cn\/widget\/note\/get_widget_note(?:\?|$)/i then reject(404)
+
+# --- 更新检查与推送 ---
+request if ${url} ~= /^https?:\/\/mapi\.mafengwo\.cn\/system\/update\/check_update(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/mapi\.mafengwo\.cn\/system\/push\/get_local_push_config(?:\?|$)/i then reject(404)
+
+[MITM]
+hostname = mapi.mafengwo.cn

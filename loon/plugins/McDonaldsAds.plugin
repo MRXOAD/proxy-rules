@@ -1,0 +1,16 @@
+#!name=麦当劳去广告
+#!desc=移除麦当劳开屏广告及首页营销弹窗。
+#!openUrl=https://apps.apple.com/app/id1092623003
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e1/d0/3b/e1d03b11-9f9b-f7b2-50c9-a46d2661c143/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 开屏启动页与营销弹窗。上游三条实际都在 api.mcd.cn/bff/portal 下、
+# 且互相覆盖，合并成一条返回 200 空响应
+request if ${url} ~= /^https?:\/\/api\.mcd\.cn\/bff\/portal\/(?:home\/splash|richpop)/i then reject(200)
+
+[MITM]
+hostname = api.mcd.cn

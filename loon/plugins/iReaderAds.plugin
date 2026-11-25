@@ -1,0 +1,38 @@
+#!name=掌阅去广告
+#!desc=移除掌阅开屏广告、书城广告、首页弹窗、我的页面标签广告及阅读页推广条。
+#!openUrl=https://apps.apple.com/app/id420600095
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/62/11/3c/62113c23-d9ea-1b55-f2ef-07d25f7a7966/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 书城广告位（zyapi/bookstore/ad 与 bookstore/ad 两种写法合并）
+request if ${url} ~= /^https?:\/\/(?:webboot\.zhangyue\.com|ih2\.ireader\.com)\/(?:zyapi\/)?bookstore\/ad/i then reject_dict(200)
+
+# 我的页标签栏广告
+request if ${url} ~= /^https?:\/\/(?:webboot\.zhangyue\.com|ih2\.ireader\.com)\/(?:zyapi\/bookstore\/user\/mytab|zyboot\/activity\/mytab)\?/i then reject_dict(200)
+
+# 首页弹窗
+request if ${url} ~= /^https?:\/\/(?:webboot\.zhangyue\.com|ih2\.ireader\.com)\/zybk\/api\/pop\/index\?/i then reject_dict(200)
+
+# 个人页接口（含推荐与活动模块）
+request if ${url} ~= /^https?:\/\/(?:webboot\.zhangyue\.com|ih2\.ireader\.com)\/zyam\/app\/app\.php\?/i then reject_dict(200)
+
+# 开机启动页（AdRewrite 原有两条主机不同，这里补齐 ireader 全系）
+request if ${url} ~= /^https?:\/\/api\.ireader\.mobi\/activity\/ad\/openScreen/i then reject(200)
+request if ${url} ~= /^https?:\/\/api\.ireaderm\.net\/activity\/(?:ad|popup\/info)/i then reject(200)
+request if ${url} ~= /^https?:\/\/ih2\.ireader\.com\/zyapi\/self\/screen\/ad/i then reject(200)
+request if ${url} ~= /^https?:\/\/ih2\.ireader\.com\/zycl\/api\/ad/i then reject(200)
+
+# 主接口返回体里的开屏字段（Kelee 独有，AdRewrite 未收）
+response if ${url} ~= /^https?:\/\/(?:webboot\.zhangyue\.com|ih2\.ireader\.com)\/zybook4\/iphone\/u\/p\/api\.php\?/i then response.json.delete("Splash")
+
+# 阅读页视觉频道推广条：只删 id 含 ad_ 的条目，正常书籍保留
+response if ${url} ~= /^https?:\/\/(?:webboot\.zhangyue\.com|ih2\.ireader\.com)\/bookstore\/read\/visual\/channel\/list\?/i then response.json.jq("if (try (.body.list | type) catch null) == \"array\" then .body.list |= map(select(((.id // \"\") | tostring | contains(\"ad_\")) | not)) else . end")
+
+request if ${url} ~= /^https?:\/\/saad\.ms\.zhangyue\.net\/ad/i then reject(404)
+
+[MITM]
+hostname = api.ireader.mobi, api.ireaderm.net, ih2.ireader.com, saad.ms.zhangyue.net, webboot.zhangyue.com

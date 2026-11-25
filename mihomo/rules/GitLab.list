@@ -1,0 +1,13 @@
+# GitLab 美国优先 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD GitLab
+# TOTAL: 8
+
+DOMAIN-SUFFIX,gitlab-static.net
+DOMAIN-SUFFIX,gitlab.com
+DOMAIN-SUFFIX,gitlab.io
+DOMAIN-SUFFIX,gitlab.net
+DOMAIN-SUFFIX,gitlabassets.com
+DOMAIN-SUFFIX,gitlabusercontent.com
+DOMAIN-SUFFIX,gitter-static.net
+DOMAIN-SUFFIX,gitter.im

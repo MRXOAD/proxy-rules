@@ -1,0 +1,21 @@
+#!name=山姆会员商店去广告
+#!desc=移除山姆会员商店开屏推广、升级弹窗与频道广告位；保留个人中心入口、常购商品与搜索推荐。
+#!openUrl=https://apps.apple.com/app/id818237113
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/54/12/f4/5412f467-ddcd-b06b-be7d-6a12647308ed/AppIcon-1x_U007emarketing-0-5-0-85-220-0.png/120x120bb.jpg
+
+[Rewrite]
+# 2026-11-24 从 AdRewrite 迁出独立成插件（R-Store samsclub.conf / fmz200）：
+# 开屏推广与弹窗广告
+request if ${url} ~= /^https?:\/\/api-sams\.walmartmobile\.cn\/api\/v\d\/sams\/sams-user\/(window\/getGoUpPlus|screen_promotion\/get)/i then reject(200)
+# 频道门户广告位
+request if ${url} ~= /^https?:\/\/api-sams\.walmartmobile\.cn\/api\/v\d\/sams\/channel\/portal\/AdgroupData/i then reject_dict(200)
+# 应用更新提示弹窗
+request if ${url} ~= /^https?:\/\/api-sams\.walmartmobile\.cn\/api\/v\d\/sams\/configuration\/appVersionUpdate\/getAppVersionUpdateInfo/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/api-sams\.walmartmobile\.cn\/api\/v\d\/sams\/configuration\/portal\/beUpdate/i then reject_dict(200)
+
+[MITM]
+hostname = api-sams.walmartmobile.cn

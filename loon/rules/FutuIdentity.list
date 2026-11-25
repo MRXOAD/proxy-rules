@@ -1,0 +1,16 @@
+# 富途地区与账户入口（Loon/Mihomo） 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Futu identity routing
+# TOTAL: 10
+# 用途与范围：富途地区识别、认证及共用账户 API；与独立行情资源区分。
+
+DOMAIN,api.futunn.com
+DOMAIN,api5.futunn.com
+DOMAIN,auth.futunn.com
+DOMAIN,sdauth.futunn.com
+DOMAIN,www.futunn.com
+DOMAIN-SUFFIX,futu.com
+DOMAIN-SUFFIX,futuhk.com
+DOMAIN-SUFFIX,futuhongkong.com
+DOMAIN-SUFFIX,moomoo.com
+DOMAIN-SUFFIX,moomoo.com.hk

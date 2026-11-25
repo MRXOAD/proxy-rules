@@ -1,0 +1,10 @@
+# Hulu 日本业务 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Hulu Japan split
+# TOTAL: 4
+# 用途与范围：原 Hulu 表中日本版主站、HJ Holdings 和已登记日本资源域。
+
+DOMAIN-SUFFIX,happyon.jp
+DOMAIN-SUFFIX,hjholdings.jp
+DOMAIN-SUFFIX,hulu.jp
+DOMAIN-SUFFIX,prod.hjholdings.tv

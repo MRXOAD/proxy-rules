@@ -1,0 +1,33 @@
+#!name=平安银行去广告
+#!desc=移除平安口袋银行首页横幅、弹窗广告、大体积 JPEG 物料广告图、推荐内容及调查弹窗。
+#!openUrl=https://apps.apple.com/app/id458042156
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b0/7a/d7/b07ad758-2d59-cf7f-dbbc-f2535670b36f/AppIcon-0-0-1x_U007ephone-0-11-0-0-P3-85-220.png/120x120bb.png
+
+[Rule]
+# 2026-11-24（R-Store sdb.list）：平安系健康/埋点域，已在 AdRules 覆盖，插件内保留以便单插件自持。
+DOMAIN,dwtracking.jk.cn,REJECT
+
+[Rewrite]
+# 首页横幅与弹窗（fmz200、R-Store 共有）
+request if ${url} ~= /^https?:\/\/cdn\.sdb\.com\.cn\/widget\/magic-module-sprite\/general-banner/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/cdn\.sdb\.com\.cn\/widget\/magic-module-sprite\/dialog-normal/i then reject_dict(200)
+# 推荐内容、推荐列表与推荐视频（R-Store）
+request if ${url} ~= /^https?:\/\/cdn\.sdb\.com\.cn\/widget\/pb\/pb-plugins-recomend-content/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/cdn\.sdb\.com\.cn\/widget\/pb\/pb-plugins-rec-content-list/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/cdn\.sdb\.com\.cn\/widget\/pb\/pb-plugins-rec-mivideo/i then reject_dict(200)
+# 广告 SDK 配置、升级提示与满意度调查弹窗（R-Store，复用已解密 cdn.sdb.com.cn）
+request if ${url} ~= /^https?:\/\/cdn\.sdb\.com\.cn\/app_com\/adversdk/i then reject(200)
+request if ${url} ~= /^https:\/\/cdn\.sdb\.com\.cn\/ibank\/upgrade\/plugins\/upgradefile\.ios\.simplify/i then reject(200)
+request if ${url} ~= /^https?:\/\/cdn\.sdb\.com\.cn\/widget\/nps\/feedback\//i then reject(404)
+
+[Script]
+# 2026-11-23（R-Store sdb.conf / sdb.js）：复用已解密的 cdn.sdb.com.cn，拦截 bron-coms 物料目录下 >100KB 的 JPEG 广告/开屏图回 204；
+# 不新增解密 b.pingan.com.cn 等银行 H5/业务域。mode=log 保留未命中图尺寸与体积供 Debug 复核。
+response if ${url} ~= /^https?:\/\/cdn\.sdb\.com\.cn\/bron-coms\/bron-coms\/material-image/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "mode=log&min_jpeg_bytes=100000") with tag="平安口袋图片广告", timeout=10, requires_body=true, binary_body_mode=true
+
+[MITM]
+hostname = cdn.sdb.com.cn

@@ -1,0 +1,39 @@
+#!name=Keep去广告
+#!desc=移除开屏与课程广告、信息流推广、各类弹窗引导、搜索热词及升级提示。
+#!openUrl=https://apps.apple.com/app/id952694580
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/62/e9/85/62e98549-8de8-07bd-d632-9cd793165269/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg
+
+[Rewrite]
+# 广告位与广告预加载。上游 ad 与 ads 两条宽窄互吞，合并成按路径分支的一条
+request if ${url} ~= /^https?:\/\/api\.gotokeep\.com\/(?:ads|op-engine-webapp\/v\d+\/ad)(?:\/|\?|$)/i then reject(200)
+request if ${url} ~= /^https?:\/\/kad\.gotokeep\.com\/op-engine-webapp\/v\d+\/ad(?:\/|\?|$)/i then reject(200)
+
+# 广告位下发配置：只删广告相关字段，保留其余配置
+response if ${url} ~= /^https?:\/\/api\.gotokeep\.com\/op-engine-webapp\/v1\/configs$/i then response.json.jq("if (.data | type) == \"object\" then .data |= with_entries(select(.key | test(\"^ad|Ad|Spot|spot|pugc|Pull|Rolls|closeConfirm\"; \"\")) | not) else . end")
+
+# 弹窗引导（活动弹窗与首次启动引导）
+request if ${url} ~= /^https?:\/\/api\.gotokeep\.com\/guide-webapp\/v\d+\/popup\/getPopUp\?/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/api\.gotokeep\.com\/running\/v\d+\/home\/dialog\?/i then reject(200)
+request if ${url} ~= /^https?:\/\/api\.gotokeep\.com\/kprime\/v\d+\/popups\/primeGuide\?/i then reject(200)
+request if ${url} ~= /^https?:\/\/api\.gotokeep\.com\/cauchy\/growth\/init\?/i then reject(200)
+
+# 搜索热词、热搜话题、热门课程
+request if ${url} ~= /^https?:\/\/api\.gotokeep\.com\/search\/v\d+\/(?:default\/keyword\/list|hotword\/list|hotHashtag\/list|hotCourse\/list)\?/i then reject_dict(200)
+
+# 训练盒配置、升级检查、运动币提醒
+request if ${url} ~= /^https?:\/\/api\.gotokeep\.com\/training\/box\/config\?/i then reject(200)
+request if ${url} ~= /^https?:\/\/api\.gotokeep\.com\/anno\/v\d+\/upgrade\/check\?/i then reject(200)
+request if ${url} ~= /^https?:\/\/store\.gotokeep\.com\/api\/v1\/marketing\/sportCoin\/notice\?/i then reject_dict(200)
+
+# 游戏页里的 AI 模式图标（付费引导）
+response if ${url} ~= /^https?:\/\/api\.gotokeep\.com\/pencil-webapp\/play\/v1\/games\?/i then response.json.jq("if (try (.data.games | type) catch null) == \"array\" then .data.games |= map(if ((.microGames | type) == \"array\") then .microGames |= map(if (.leftIcon.type? == \"aiMode\") then .leftIcon = null else . end) else . end) else . end")
+
+# 阿里妈妈 SSP 广告域
+request if ${url} ~= /^https?:\/\/hc-ssp\.sm\.cn(?:\/|$)/i then reject(200)
+
+[MITM]
+hostname = api.gotokeep.com, kad.gotokeep.com, store.gotokeep.com, hc-ssp.sm.cn

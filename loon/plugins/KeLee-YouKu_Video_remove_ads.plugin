@@ -1,0 +1,52 @@
+#!name=优酷视频去广告
+#!desc=移除开屏广告、视频广告、信息流广告。其余广告由于请求已加密，故无法移除。
+#!openUrl=https://apps.apple.com/app/id336141475
+#!author=可莉🅥[https://github.com/luestr/ProxyResource/blob/main/README.md], RuCu6[https://github.com/RuCu6]
+#!tag=去广告
+#!system=
+#!system_version=
+#!loon_version=3.5.1(998)
+#!homepage=https://hub.kelee.one
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YouKu_Video.png
+#!date=2026-10-02 13:57:49
+# 本地修改：rules/本地补充/可莉插件/YouKu_Video_remove_ads.list（5 条）
+
+[Rule]
+DOMAIN, push.m.youku.com, DIRECT
+DOMAIN, un-acs.youku.com, DIRECT
+DOMAIN, dorangesource.alicdn.com, DIRECT
+
+DOMAIN, h-adashx.ut.taobao.com, REJECT
+DOMAIN, adx-core.youku.com, REJECT
+DOMAIN, adx-open-service.youku.com, REJECT
+DOMAIN, yk-ssp.ad.youku.com, REJECT
+DOMAIN, cad.youku.com, REJECT
+DOMAIN, ykad-data.youku.com, REJECT
+DOMAIN, yk-ssp.ad.youku.com, REJECT
+DOMAIN, amdc.m.youku.com, REJECT
+DOMAIN, cad.youku.com, REJECT
+DOMAIN, nbsdk-baichuan.alicdn.com, REJECT
+DOMAIN, youku-crm-product.youku.com, REJECT
+DOMAIN, dr-danmu.youku.com, REJECT
+DOMAIN, group-ssl-danmu-ori.youku.com, REJECT
+DOMAIN, m.atm.youku.com, REJECT
+DOMAIN, mc.atm.youku.com, REJECT
+DOMAIN, vali-g1.cp31.ott.cibntv.net, REJECT
+DOMAIN, vali-ugc.cp31.ott.cibntv.net, REJECT
+DOMAIN-SUFFIX, iyes.youku.com, REJECT
+
+DOMAIN, adsmind.ugdtimg.com, REJECT
+DOMAIN, pre-acs.youku.com, REJECT
+DOMAIN, youku-acs.m.taobao.com, REJECT
+
+[Rewrite]
+response if ${url} ~= /^https:\/\/un-acs\.youku\.com\/gw\/mtop\.youku\.play\.ups\.appinfo\.get/i then response.json.delete(["data.data.ad", "data.data.watermark", "data.data.ykad"])
+
+response if ${url} ~= /^https:\/\/push\.m\.youku\.com\/collect-api\/get_push_interval_config_wx\?/i then response.json.delete(["data.tipContent", "data.tipContentNew"])
+request if ${url} ~= /^https?:\/\/acs\.youku\.com\/gw\/mtop\.youku\.(?:pisp\.scripts\.get|xspace\.play\.position\.preload\.query|xspace\.poplayer\.position\.query)(?:\/|\?|$)/i then reject_dict(200)
+response if ${url} ~= /^https:\/\/acs\.youku\.com\/gw\/mtop\.youku\.columbus\.home\.(?:feed|query)(?:\/|\?|$)/i then response.json.jq("def keep: if type != \"object\" then true else .typeName as $kind | ([\"PHONE_FEED_CARD_S_AD\",\"PHONE_FEED_CARD_B_AD\",\"PHONE_H_UC_AD\",\"UC广告抽屉\",\"橱窗广告\"] | index($kind) | not) end; def prune: if type == \"object\" and (.nodes | type) == \"array\" then .nodes |= map(select(keep) | prune) else . end; if (try (.data[\"2019061000\"].data.nodes | type == \"array\") catch false) then .data[\"2019061000\"].data |= prune else . end")
+response if ${url} ~= /^https:\/\/acs\.youku\.com\/gw\/mtop\.youku\.columbus\.gateway\.new\.execute(?:\/|\?|$)/i then response.json.jq("def keep: if type != \"object\" then true else .typeName as $kind | ([\"播放页广告组件\"] | index($kind) | not) end; def prune: if type == \"object\" and (.nodes | type) == \"array\" then .nodes |= map(select(keep) | prune) else . end; if (try (.data[\"2019030100\"].data.nodes | type == \"array\") catch false) then .data[\"2019030100\"].data |= prune else . end")
+response if ${url} ~= /^https:\/\/acs\.youku\.com\/gw\/mtop\.youku\.columbus\.ycp\.query(?:\/|\?|$)/i then response.json.jq("def prune: if type == \"object\" and (.nodes | type) == \"array\" then if .id == 23243 then .nodes |= map(select(if type == \"object\" then .id != -1000 else true end)) else .nodes |= map(prune) end else . end; if (try (.data[\"2019061000\"].data.nodes | type == \"array\") catch false) then .data[\"2019061000\"].data |= prune else . end")
+
+[MitM]
+hostname=push.m.youku.com, un-acs.youku.com, acs.youku.com

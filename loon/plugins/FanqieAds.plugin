@@ -1,0 +1,57 @@
+#!name=番茄小说去广告
+#!desc=合并原可莉番茄域名规则与自维护穿山甲/字节广告素材拦截，去除开屏、激励视频、章末及信息流广告；保留抖音共用业务域不误伤。
+#!openUrl=https://apps.apple.com/app/id1468454200
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/77/aa/9577aa05-5617-e897-d0d7-0a6abcffa444/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg
+
+[Rule]
+# 2026-11-24 合并原 KeLee-DragonRead_remove_ads 保留的 21 条有效广告/统计域名（原 13 条误伤抖音直播/搜索/安全的字节共用域继续不收）
+DOMAIN,zlink.ugsdk.cn,REJECT
+DOMAIN,mon.toutiaocloud.net,REJECT
+DOMAIN,mon.toutiaocloud.com,REJECT
+DOMAIN,log3-applog.fqnovel.com,REJECT
+DOMAIN,log5-applog.fqnovel.com,REJECT
+DOMAIN,mon11-misc-lq.fqnovel.com,REJECT
+DOMAIN,mon11-misc.fqnovel.com,REJECT
+DOMAIN,mon3-misc.fqnovel.com,REJECT
+DOMAIN,rtlog3-applog.fqnovel.com,REJECT
+DOMAIN,rtlog5-applog.fqnovel.com,REJECT
+DOMAIN,is-lq.snssdk.com,REJECT
+DOMAIN,vas.snssdk.com,REJECT
+DOMAIN,abtest3-misc.zijieapi.com,REJECT
+DOMAIN,ads3-normal.zijieapi.com,REJECT
+DOMAIN,ads5-normal.zijieapi.com,REJECT
+DOMAIN,feedback-c.zijieapi.com,REJECT
+DOMAIN,minigame3-normal.zijieapi.com,REJECT
+DOMAIN,minigame5-normal.zijieapi.com,REJECT
+DOMAIN,timon.zijieapi.com,REJECT
+# 强制穿山甲与字节素材域回落 TCP，确保下方 URL 重写命中（2026-11-24 移出 byteimg.com 与 gecko3/gecko5.zijieapi.com，避免误伤抖音表情包与证书锁定）
+AND,((DOMAIN-SUFFIX,pangolin-sdk-toutiao.com),(PROTOCOL,QUIC)),REJECT
+AND,((DOMAIN-SUFFIX,pglstatp-toutiao.com),(PROTOCOL,QUIC)),REJECT
+AND,((DOMAIN-SUFFIX,snssdk.com),(PROTOCOL,QUIC)),REJECT
+AND,((DOMAIN-SUFFIX,pstatp.com),(PROTOCOL,QUIC)),REJECT
+
+[Rewrite]
+# 穿山甲广告 SDK：拉取广告、上报曝光、拉取设置。番茄的开屏与章末广告主体走这里
+request if ${url} ~= /^https?:\/\/[\w.-]+\.pangolin-sdk-toutiao\.com\/api\/ad\/union\/sdk\/(?:get_ads|stats|settings)\//i then reject(404)
+# 穿山甲素材：激励视频与开屏视频
+request if ${url} ~= /^https?:\/\/[\w.-]+\.pglstatp-toutiao\.com\/.+\/toutiao\.mp4/i then reject(404)
+# 穿山甲素材：广告 apk、广告图、web 素材与渲染器
+request if ${url} ~= /^https?:\/\/[\w.-]+\.(?:pglstatp-toutiao|pstatp)\.com\/(?:obj|img)\/(?:ad-app-package|ad)\/.+/i then reject(404)
+request if ${url} ~= /^https?:\/\/[\w.-]+\.(?:pglstatp-toutiao|pstatp)\.com\/(?:obj|img)\/web\.business\.image\/.+/i then reject(404)
+request if ${url} ~= /^https?:\/\/[\w.-]+\.(?:pglstatp-toutiao|pstatp)\.com\/obj\/ad-pattern\/renderer/i then reject(404)
+# 信息流里的广告拼图与来源标记为 ad 的图文
+request if ${url} ~= /^https?:\/\/[\w.-]+\.pstatp\.com\/obj\/mosaic-legacy\/.+\?from=ad/i then reject(404)
+# 字节静态广告目录（R-Store fanqie.conf；不收 gurd 离线包与 tnc3 调度域）
+request if ${url} ~= /^https?:\/\/lf-cdn-tos\.bytescm\.com\/obj\/static\/ad/i then reject(200)
+# 头条系的广告接口与打包下载
+request if ${url} ~= /^https?:\/\/[\w.-]+\.snssdk\.com\/api\/ad\/.+/i then reject(404)
+# 广告视频播放地址与埋点上报
+request if ${url} ~= /^https?:\/\/[\w.-]+\.snssdk\.com\/video\/play\/1\/toutiao\/.+\/mp4/i then reject(404)
+request if ${url} ~= /^https?:\/\/[\w.-]+\.pstatp\.com\/bytecom\/resource\/track_log\/src\/.+/i then reject(404)
+
+[MITM]
+hostname = *.pangolin-sdk-toutiao.com, *.pglstatp-toutiao.com, *.pstatp.com, *.snssdk.com, lf-cdn-tos.bytescm.com

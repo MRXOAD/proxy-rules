@@ -1,0 +1,13 @@
+# Notion 美国优先 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Notion
+# TOTAL: 7
+# 用途与范围：Notion 主站与已登记 API/资源域。
+
+DOMAIN-SUFFIX,notion-static.com
+DOMAIN-SUFFIX,notion-status.com
+DOMAIN-SUFFIX,notion.com
+DOMAIN-SUFFIX,notion.new
+DOMAIN-SUFFIX,notion.site
+DOMAIN-SUFFIX,notion.so
+DOMAIN-SUFFIX,notionusercontent.com

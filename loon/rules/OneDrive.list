@@ -1,0 +1,24 @@
+# OneDrive 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：blackmatrix7 OneDrive Clash + blackmatrix7 OneDrive Loon + MRXOAD official M365 OneDrive endpoints
+# TOTAL: 18
+# 用途与范围：OneDrive 个人文件、分享链接及 SharePoint 业务存储依赖。
+
+DOMAIN,g.live.com
+DOMAIN-SUFFIX,1drv.com
+DOMAIN-SUFFIX,1drv.ms
+DOMAIN-SUFFIX,livefilestore.com
+DOMAIN-SUFFIX,microsoftpersonalcontent.com
+DOMAIN-SUFFIX,oneclient.sfx.ms
+DOMAIN-SUFFIX,onedrive.com
+DOMAIN-SUFFIX,onedrive.live.com
+DOMAIN-SUFFIX,photos.live.com
+DOMAIN-SUFFIX,sharepoint.com
+DOMAIN-SUFFIX,sharepointonline.com
+DOMAIN-SUFFIX,skydrive.wns.windows.com
+DOMAIN-SUFFIX,spoprod-a.akamaihd.net
+DOMAIN-SUFFIX,storage.live.com
+DOMAIN-SUFFIX,storage.msn.com
+DOMAIN-SUFFIX,svc.ms
+DOMAIN-KEYWORD,onedrive
+DOMAIN-KEYWORD,skydrive

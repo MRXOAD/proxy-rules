@@ -1,0 +1,32 @@
+#!name=买单吧去广告
+#!desc=过滤已知开屏素材路径、弹窗及推广接口，另保留特定尺寸过滤。需解密列出的买单吧主机；可单独关闭。
+#!openUrl=https://apps.apple.com/app/id1057446665
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/84/75/e2/8475e294-f276-2683-0dcb-73fe528d3a7c/AppIcon-0-0-1x_U007emarketing-0-7-0-sRGB-85-220.png/120x120bb.jpg
+
+[Rule]
+# 2026-11-24（R-Store maidanba.list）：交行埋点域，同步进 Reject.list 确保家里 Wi-Fi 一致拦截。
+DOMAIN-SUFFIX,track.bankcomm.com,REJECT
+
+[Rewrite]
+# 来源：zirawell/R-Store 买单吧模块（2026-11-20 核原文）。
+# 两处明确素材路径不依赖设备分辨率；保留上游 tiny-gif 响应，不整目录拒绝。
+request if ${url} ~= /^https?:\/\/creditcard\.bankcomm\.(com|cn)\/tfimg\/public00\/M00\/4C\/6F\/[^?#]+(?:\?[^#]*)?$/i then reject_img(200)
+request if ${url} ~= /^https?:\/\/creditcard\.bankcomm\.(com|cn)\/tofimg\/bucket-pj-btss-tfcn-dmz\/OSS-F\/a8f2e8[^?#]*(?:\?[^#]*)?$/i then reject_img(200)
+# 来源：blackmatrix7/ios_rule_script 的 AdvertisingLite；getPopAds 同见本仓墨鱼原料。
+# 只匹配明确列出的端点，不使用 mappweb.*(Advert|Ads) 的宽泛规则。
+request if ${url} ~= /^https?:\/\/creditcardapp\.bankcomm\.com\/mapp\/common\/(queryGuidePageAds|getPopAds)\.do(?:\?.*)?$/i then reject(200)
+request if ${url} ~= /^https?:\/\/creditcardapp\.bankcomm\.(com|cn)\/mappweb_interface\/common\/(qryPopAds|qryLaunchAds)\.do(?:\?.*)?$/i then reject(200)
+# 来源：zirawell/R-Store 买单吧规则；只处理首页及发现页 promote 推广接口。
+request if ${url} ~= /^https?:\/\/creditcardapp\.bankcomm\.(com|cn)\/mappweb\/homepage(?:\/discovery)?\/promote(?:\?[^#]*)?$/i then reject_dict(200)
+
+[Script]
+# 来源：https://t.me/Aa28413761/2283 。补充处理前述明确素材以外、实际尺寸为 1242×2688 的完整图片。
+# 复用本仓脚本；其他尺寸、非图片、未知格式与非 200 响应原样放行，不拦整个素材目录。
+response if ${url} ~= /^https?:\/\/creditcard\.bankcomm\.(com|cn)\/tofimg\/bucket-pj-btss-tfcn-dmz\/OSS-F\/[^?#]+(?:\?[^#]*)?$/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "exact=1242x2688") with tag="买单吧开屏尺寸拦截", requires_body=true, binary_body_mode=true
+
+[MITM]
+hostname = creditcardapp.bankcomm.com, creditcardapp.bankcomm.cn, creditcard.bankcomm.com, creditcard.bankcomm.cn

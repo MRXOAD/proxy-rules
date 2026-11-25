@@ -1,0 +1,33 @@
+# OKX 全部直连（Loon/Mihomo） 分流规则（mihomo classical 格式）
+# 维护：MRXOAD
+# 来源：blackmatrix7 OKX Clash + blackmatrix7 OKX Loon + MetaCubeX geosite okx + MRXOAD OKX direct supplement
+# TOTAL: 28
+payload:
+  - DOMAIN,4i0060699wiv380a.aliyunddos1021.com
+  - DOMAIN,apk.daksjs.com
+  - DOMAIN,d1nil3qbkxfj92.cloudfront.net
+  - DOMAIN,d1w1p0smpsoh5j.cloudfront.net
+  - DOMAIN,d29k19mtgrv4h9g5.aliyunddos1021.com
+  - DOMAIN,d2p7qknqur0nu9.cloudfront.net
+  - DOMAIN,d3f0nrrzpmxcu1.cloudfront.net
+  - DOMAIN,f7e946062ioy2i8q.aliyunddos1021.com
+  - DOMAIN,scz9jm3574d83mya.aliyunddos1021.com
+  - DOMAIN,static.coinall.ltd
+  - DOMAIN,static.jingyunyilian.com
+  - DOMAIN-SUFFIX,cnouyi.pizza
+  - DOMAIN-SUFFIX,gihiji.com.eo.dnse4.com
+  - DOMAIN-SUFFIX,okex.com
+  - DOMAIN-SUFFIX,okex.org
+  - DOMAIN-SUFFIX,oklink.com
+  - DOMAIN-SUFFIX,okx-dns.com
+  - DOMAIN-SUFFIX,okx-dns1.com
+  - DOMAIN-SUFFIX,okx-dns2.com
+  - DOMAIN-SUFFIX,okx.ac
+  - DOMAIN-SUFFIX,okx.cab
+  - DOMAIN-SUFFIX,okx.com
+  - DOMAIN-SUFFIX,okx.com.cdn.cloudflare.net
+  - DOMAIN-SUFFIX,okx.reise
+  - DOMAIN-SUFFIX,okxwallet.com
+  - DOMAIN-SUFFIX,ouchyi.support
+  - DOMAIN-SUFFIX,ouyijoin.com
+  - DOMAIN-SUFFIX,xlayer.tech

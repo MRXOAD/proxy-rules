@@ -1,0 +1,35 @@
+#!name=掌上生活去广告
+#!desc=移除掌上生活广告位、图文内容流、猜你喜欢及首页活动推广。
+#!openUrl=https://apps.apple.com/app/id399092751
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/9c/8d/97/9c8d9794-17db-3f4d-4463-67e2b193fb31/AppIcon-0-0-1x_U007emarketing-0-7-0-sRGB-85-220.png/120x120bb.png
+
+[Rule]
+# 客户端日志与 Mars 埋点上报，整域拒绝（2026-11-23 日志实测 Mars 已拆出独立主机，同步进 Reject.list）
+DOMAIN,applog.paas.cmbchina.com,REJECT
+DOMAIN,marstrace.ccd.cmbchina.com,REJECT
+DOMAIN,marsreceiver.ccd.cmbchina.com,REJECT
+
+[Rewrite]
+# 广告渲染：取广告素材与批量广告查询（R-Store cmbcc-App）
+request if ${url} ~= /^https?:\/\/intellicc\.\w+\.cmbchina\.com\/Edge\/api\/mlife\.intelli\.adrender\.api\.(?:AdWork|QueryMultipleAds)/i then reject_dict(200)
+# 动态渲染接口，用于活动与广告楼层
+request if ${url} ~= /^https?:\/\/intellicc\.\w+\.cmbchina\.com\/Edge\/api\/mlife\.intelli\.render\.api\.render\/getDynamicDataSec/i then reject_dict(200)
+# 推荐结果（首页猜你喜欢）
+request if ${url} ~= /^https?:\/\/intellicc\.\w+\.cmbchina\.com\/Edge\/api\/mlife\.intelli\.render\.api\.RecommendRenderControllerApi\/getRecommendResult/i then reject_dict(200)
+# 广告预缓存（客户端预拉下一屏广告）
+request if ${url} ~= /^https?:\/\/.*mbasecc\.\w+\.cmbchina\.com\/Edge\/api\/mlife\.clientface\.clientservice\.api\.advertiseService\/preCacheAdvertiseSec/i then reject_dict(200)
+# 内容流（图文推荐）
+request if ${url} ~= /^https?:\/\/contentcc\.bcs\.cmbchina\.com\/Edge\/api\/contentpublisher\.api\.UserFeedsControllerApi\/query/i then reject_dict(200)
+# 活动参与位（首页活动楼层）
+request if ${url} ~= /^https?:\/\/yummy2web01-edge-dmz\.bcs\.cmbchina\.com\/Edge\/api\/cmscampaign\.api\.HomeActivityClientControllerApi\/activityClientPartake/i then reject_dict(200)
+# 2026-11-23（R-Store cmbcc.conf + 11-23 日志实测 interactivecc.bcs 命中）：陪伴式推广/营销浮层配置
+request if ${url} ~= /^https?:\/\/interactivecc\.\w+\.cmbchina\.com\/Edge\/api\/atpcore\.api\.AccompanyingServiceControllerApi\/queryAccompanyingServiceUserConfForApp/i then reject_dict(200)
+# 埋点上报，返回空对象即可（R-Store 用 data="{}"）
+request if ${url} ~= /^https?:\/\/mars(?:cc)?\.\w+\.cmbchina\.com\/MarsReceiver/i then reject_dict(200)
+
+[MITM]
+hostname = intellicc.bcs.cmbchina.com, intellicc.bas.cmbchina.com, mbasecc.bcs.cmbchina.com, mbasecc.bas.cmbchina.com, contentcc.bcs.cmbchina.com, interactivecc.bcs.cmbchina.com, yummy2web01-edge-dmz.bcs.cmbchina.com, mars.ccc.cmbchina.com, marscc.bcs.cmbchina.com

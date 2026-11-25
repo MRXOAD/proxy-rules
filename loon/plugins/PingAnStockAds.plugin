@@ -1,0 +1,23 @@
+#!name=平安证券去广告
+#!desc=移除平安证券开屏广告、自定义广告位、财经直播广告及 pacdn 全屏竖图开屏；保留启动公告、行情与交易接口。
+#!openUrl=https://apps.apple.com/app/id636344719
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d8/fc/49/d8fc4917-2e62-742e-1cc6-2c4ec15ac187/AppIcon-0-0-1x_U007emarketing-0-6-0-sRGB-85-220.png/120x120bb.jpg
+
+[Rewrite]
+# 2026-11-24 合并原模板手写规则与 AdRewrite openAd 独立成插件；不拦 launch/notice 启动公告（可能含停牌或风险提示）。
+request if ${url} ~= /^https?:\/\/m\.stock\.pingan\.com\/restapi\/rmd\/open\/O\/api\/openAd/i then reject(200)
+request if ${url} ~= /^https?:\/\/m\.stock\.pingan\.com\/restapi\/adoperation\/option\/customAdvertising/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/m\.stock\.pingan\.com\/restapi\/live\/communityservice\/http\/getCaiTvAdvert/i then reject_dict(200)
+# 2026-11-24 日志实测平安证券冷启动并发请求 maam.pingan.com.cn；同步拦截平安系营销引导接口，不整域拒绝主站以免影响插件管理。
+request if ${url} ~= /^https?:\/\/maam\.pingan\.com\.cn\/maam\/plugin\/getMarketGuideInfo/i then reject_dict(200)
+
+[Script]
+# R-Store pinganstock.conf 整目录拒 pacdn.m.stock.pingan.com/images/ 会误伤普通图标，改为只拦开屏比例竖图回 404。
+response if ${url} ~= /^https?:\/\/pacdn\.m\.stock\.pingan\.com\/images\//i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/BankImageSize.js", "mode=splash") with tag="平安证券开屏图", timeout=10, requires_body=true, binary_body_mode=true
+
+[MITM]
+hostname = m.stock.pingan.com, pacdn.m.stock.pingan.com, maam.pingan.com.cn

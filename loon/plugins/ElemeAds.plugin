@@ -1,0 +1,43 @@
+#!name=饿了么去广告
+#!desc=移除饿了么（淘宝闪购）开屏广告、首页浮层及各类营销与优惠券弹窗。
+#!openUrl=https://apps.apple.com/app/id507161324
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(978)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ef/be/73/efbe7391-39d3-4336-0c7b-c87777a7501a/AppIcon_new-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg
+
+[Rule]
+AND,((DOMAIN,waimai-guide.ele.me),(PROTOCOL,QUIC)),REJECT
+AND,((DOMAIN,amdc.m.ele.me),(PROTOCOL,QUIC)),REJECT
+
+[Rewrite]
+# 阿里妈妈广告分发接口（饿了么首页与商详的广告位都走这里）
+request if ${url} ~= /^https?:\/\/amdc\.m\.ele\.me\/amdc\/mobileDispatch/i then reject_dict(200)
+
+# 开屏广告素材：sitemap 清单、视频、以及按 #w/#h 标记的多档尺寸图
+request if ${url} ~= /^https?:\/\/elemecdn\.com\/.+\/sitemap/i then reject(200)
+request if ${url} ~= /^https?:\/\/fuss10\.elemecdn\.com\/.+\.mp4/i then reject(200)
+request if ${url} ~= /^https?:\/\/fuss10\.elemecdn\.com\/.+\/w\/(?:640|750)\/h\/\d{3,4}/i then reject(200)
+
+# 开屏与横幅的 webp 转码图，尺寸标记在 x-oss-process 参数里
+# 上游按 w_1xxx/w_6xx/w_xxx/w_xxxx 分了四条，这里合成一条尺寸通配
+request if ${url} ~= /^https?:\/\/cube\.elemecdn\.com\/[\w\/]+\.jpeg\?x-oss-process=image\/resize,m_fill,w_\d+,h_\d+\/format,webp\//i then reject(404)
+request if ${url} ~= /^https?:\/\/cube\.elemecdn\.com\/\w\/\w{2}\/\w+mp4\.mp4\?/i then reject(404)
+request if ${url} ~= /^https?:\/\/(?:nr-op|cube)\.elemecdn\.com\/image\/.*\.(?:png|jpeg|jpg|gif)\?x-oss-process=image\/resize,m_fill,w_\d+,h_\d+\/?(?:$|format,webp\/$)/i then reject_img(200)
+
+# 第三方投放落地页（饿了么买菜）
+request if ${url} ~= /^https?:\/\/www1\.elecfans\.com\/www\/delivery\//i then reject(404)
+# 首页浮层模板
+request if ${url} ~= /^https?:\/\/nr-op\.elemecdn\.com\/eleme\/transformer\/templates\/\w_eleme_home_yolo_popup/i then reject(404)
+
+# 首页推送弹窗、店铺详情弹窗、门店优惠券弹窗
+request if ${url} ~= /^https?:\/\/waimai-guide\.ele\.me\/\w+\/mtop\.alsc\.eleme\.\w+\.trigger\.respond/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/waimai-guide\.ele\.me\/\w+\/mtop\.alsc\.wamai\.store\.detail\.miniapp\.popup/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/waimai-guide\.ele\.me\/\w+\/mtop\.venus\.shopcouponpopupservice\.getshopcouponspopup/i then reject_dict(200)
+
+# 店铺品牌弹窗（zirawell 独有，AdRewrite 未收）
+request if ${url} ~= /^https?:\/\/g\.alicdn\.com\/TBTakeout\/et-store\/\d+\/weex\/store-brand-popup/i then reject_dict(200)
+
+[MITM]
+hostname = amdc.m.ele.me, elemecdn.com, fuss10.elemecdn.com, cube.elemecdn.com, nr-op.elemecdn.com, www1.elecfans.com, g.alicdn.com, waimai-guide.ele.me

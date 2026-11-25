@@ -1,0 +1,18 @@
+#!name=交通银行去广告
+#!desc=移除交通银行首页推广素材，不包含买单吧。
+#!openUrl=https://apps.apple.com/app/id339382433
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ce/26/0c/ce260cef-5923-6a91-3963-f3311be8c9d6/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/120x120bb.png
+
+[Rewrite]
+# 首页媒体素材（图片与视频封面）
+request if ${url} ~= /^https?:\/\/download1\.bankcomm\.com\/chngweb\/CHNRCSP\/media/i then reject(200)
+# 以下两条来自上游，属配置级，未启用：
+# request if ${url} ~= /^https?:\/\/download1\.bankcomm\.com\/mobs6-inner\/offline\/static\/releaseConf/i then reject(200)
+# request if ${url} ~= /^https?:\/\/download1\.bankcomm\.com\/_cdn\/mobs\/home\/oss\/pub\/file\/file\/public\/config\/pageConfig/i then reject(200)
+
+[MITM]
+hostname = download1.bankcomm.com

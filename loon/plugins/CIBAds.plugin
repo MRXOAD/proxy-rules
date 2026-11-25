@@ -1,0 +1,12 @@
+#!name=兴业银行去广告
+#!desc=移除兴业银行活动中心营销推广，不包含兴业生活。
+#!openUrl=https://apps.apple.com/app/id392399137
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/19/bf/ae/19bfae94-47f3-b5c2-cc33-484e753737f1/AppIcon-0-0-1x_U007emarketing-0-6-0-sRGB-85-220.png/120x120bb.png
+
+[Rule]
+# 活动中心（签到、抽奖、任务类营销）
+DOMAIN,qdzx.cib.com.cn,REJECT

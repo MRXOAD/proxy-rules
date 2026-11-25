@@ -1,0 +1,16 @@
+# Slack 美国优先 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Slack
+# TOTAL: 11
+
+DOMAIN-SUFFIX,slack-core.com
+DOMAIN-SUFFIX,slack-edge.com
+DOMAIN-SUFFIX,slack-files.com
+DOMAIN-SUFFIX,slack-imgs.com
+DOMAIN-SUFFIX,slack-msgs.com
+DOMAIN-SUFFIX,slack-redir.net
+DOMAIN-SUFFIX,slack.com
+DOMAIN-SUFFIX,slack.help
+DOMAIN-SUFFIX,slackcertified.com
+DOMAIN-SUFFIX,slackdemo.com
+DOMAIN-SUFFIX,slackhq.com

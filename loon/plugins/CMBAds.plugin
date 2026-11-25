@@ -1,0 +1,32 @@
+#!name=招商银行去广告
+#!desc=移除招商银行开屏广告、首页推荐横幅及AI栏目推广。
+#!openUrl=https://apps.apple.com/app/id398867247
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1a/99/59/1a995901-fffe-31fc-5baf-df779a0b37e1/AppIcon26-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/120x120bb.png
+
+[Rule]
+# 广告投放域与埋点域，整域拒绝不影响功能（R-Store cmb；yl.zh 同步进 Reject.list）
+DOMAIN,mbads.paas.cmbchina.com,REJECT
+DOMAIN,log.cmbchina.com,REJECT
+DOMAIN,yl.zh.cmbchina.com,REJECT
+
+[Rewrite]
+# 开屏与首页营销配置（fmz200 ChinaMerchantsBank 与 R-Store cmb 共有写法）
+request if ${url} ~= /^https?:\/\/webappcfg\.paas\.cmbchina\.com\/v\d+\/func\/getmarketconfig/i then reject(200)
+# 首页 graphic 模块（横幅楼层）
+request if ${url} ~= /^https?:\/\/mbmodule-openapi\.paas\.cmbchina\.com\/graphic\/v2\/module\/graphic/i then reject_dict(200)
+# 首页推荐与 AI 栏目（R-Store cmb）。返回空对象，App 按「无内容」渲染，不占位。
+request if ${url} ~= /^https?:\/\/entry-gateway\.paas\.cmbchina\.com\/ccgateway\/api\/paas-entry\/recommend/i then reject_dict(200)
+request if ${url} ~= /^https?:\/\/entry-gateway\.paas\.cmbchina\.com\/ccgateway\/api\/paas-entry\/ai-column/i then reject_dict(200)
+# 营销素材图（2026-09-22 日志 10 张逐张看过：抽奖 / 基金营销横幅、商户立减卡片、活动配图）。
+# 同主机的首页模块图标 mbmoduleimg、主题卡片 params 不在此目录。2026-09-28 补齐：CDN 换域名后只连 s3gw.cmbimg.cn。
+request if ${url} ~= /^https?:\/\/s3gw\.cmbimg\.com\/lv6604-material-prd-\d+\/material\/ecsimg\//i then reject_img(200)
+request if ${url} ~= /^https?:\/\/s3gw\.cmbimg\.cn\/lv6604-material-prd-\d+\/material\/ecsimg\//i then reject_img(200)
+# 开屏初始化广告专用目录（只补 .com 主机的旧公开目录，不触及普通功能图或银行网关）
+request if ${url} ~= /^https?:\/\/s3gw\.cmbimg\.com\/mbappinitads\//i then reject_img(200)
+
+[MITM]
+hostname = webappcfg.paas.cmbchina.com, mbmodule-openapi.paas.cmbchina.com, entry-gateway.paas.cmbchina.com, s3gw.cmbimg.com, s3gw.cmbimg.cn

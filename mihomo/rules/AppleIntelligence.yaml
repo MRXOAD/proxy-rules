@@ -1,0 +1,10 @@
+# Apple Intelligence 分流规则（mihomo classical 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD local Apple Intelligence
+# TOTAL: 5
+payload:
+  - DOMAIN,apple-relay.apple.com
+  - DOMAIN,apple-relay.cloudflare.com
+  - DOMAIN,apple-relay.fastly-edge.com
+  - DOMAIN,cp4.cloudflare.com
+  - DOMAIN,gspe1-ssl.ls.apple.com

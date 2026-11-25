@@ -1,0 +1,8 @@
+# Claude DNS 出口 分流规则（Loon 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD Loon-only Claude DNS
+# TOTAL: 2
+# 用途与范围：Claude 专用加密 DNS 的连接入口，保持解析随 Claude 出口。
+
+IP-CIDR,1.1.1.1/32,no-resolve
+IP-CIDR,8.8.8.8/32,no-resolve

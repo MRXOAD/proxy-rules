@@ -1,0 +1,15 @@
+# NotebookLM 分流规则（mihomo text 格式）
+# 维护：MRXOAD
+# 来源：MRXOAD local NotebookLM
+# TOTAL: 10
+
+DOMAIN,notebooklm-pa.googleapis.com
+DOMAIN,notebooklm.cloud.google.com
+DOMAIN,vertexaisearch.cloud.google.com
+DOMAIN-SUFFIX,ai.google.dev
+DOMAIN-SUFFIX,discoveryengine.clients6.google.com
+DOMAIN-SUFFIX,discoveryengine.googleapis.com
+DOMAIN-SUFFIX,discoveryengine.mtls.googleapis.com
+DOMAIN-SUFFIX,notebooklm.google
+DOMAIN-SUFFIX,notebooklm.google.com
+DOMAIN-SUFFIX,notebooklm.googleapis.com

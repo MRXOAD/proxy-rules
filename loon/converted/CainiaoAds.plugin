@@ -1,0 +1,54 @@
+#!name=菜鸟裹裹去广告
+#!openUrl=https://apps.apple.com/app/id951610982
+#!author=ddgksf2013
+#!desc=移除菜鸟应用及小程序通用广告、首页推广、底部商品推广及搜索推荐，精简我的页面。
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7a/7f/81/7a7f817e-184b-3ec6-b8d0-492a15419dd2/AppIcon-0-1x_U007epad-0-1-0-85-220-0.png/120x120bb.png
+#!tag=去广告
+#!loon_version=3.5.1(983)
+
+[Rule]
+AND,((DOMAIN,cn-acs.m.cainiao.com),(PROTOCOL,QUIC)),REJECT
+AND,((DOMAIN,guide-acs.m.taobao.com),(PROTOCOL,QUIC)),REJECT
+AND,((DOMAIN,acs4miniapp-inner.m.taobao.com),(PROTOCOL,QUIC)),REJECT
+
+[Rewrite]
+# > 菜鸟裹裹_通用广告请求@ddgksf2013
+request if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.(?!.*_home)/i then reject(200)
+# > 菜鸟裹裹_通用广告请求@ddgksf2013
+request if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.mshow\.cn/i then reject(200)
+# > 菜鸟裹裹_首页底部商品推广@ddgksf2013
+request if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbcps\.presentation\.fetch\.cn/i then reject(200)
+# > 菜鸟裹裹_底部角标推广@ddgksf2013
+request if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.app\.home\.v\d+\.bottom\.area/i then reject(200)
+# > 菜鸟裹裹_支付宝小程序_通用广告请求@ddgksf2013
+request if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\./i then reject(200)
+# > 菜鸟裹裹_支付宝小程序_底部商品推广新@ddgksf2013
+request if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.alimama\.abyss\.unionpage\.get/i then reject(200)
+# > 菜鸟裹裹_支付宝小程序_底部商品推广旧@ddgksf2013
+request if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.cainiao\.adx\.flyad\.getad/i then reject(200)
+# > 菜鸟裹裹_支付宝小程序_匿名选择@ddgksf2013
+request if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.taobao\.com\/gw\/mtop\.cainiao\.nbmensa\.research\.researchservice\.consultmerge/i then reject(200)
+
+# 本地补充：fmz200 的 CPC 独立推荐广告入口；不拦取件站点或首页聚合。
+request if ${url} ~= /^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.nbopen\.miniapp\.recommend\.cpc\.cn(?:\/|\?|$)/i then reject_dict(200)
+
+# 本地补充：fmz200 独立底栏营销资源，不拦首页聚合与取件。
+request if ${url} ~= /^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.tabbar\.marketing\.get\.cn(?:\/|\?|$)/i then reject_dict(200)
+
+[Script]
+
+# > 菜鸟裹裹_我的页面去除推广[卸载重装]@ddgksf2013
+response if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/converted/scripts/cainiao_json.js") with tag="cainiao_json", timeout=60, requires_body=true
+
+# > 菜鸟裹裹_首页中部的问邻居推广@ddgksf2013
+response if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.homepage\.merge\.get\.cn/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/converted/scripts/cainiao_json.js") with tag="cainiao_json", timeout=60, requires_body=true
+
+# > 菜鸟裹裹_首页中部的惊喜福利推广@ddgksf2013
+response if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.nbpresentation\.protocol\.homepage\.get\.cn/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/converted/scripts/cainiao_json.js") with tag="cainiao_json", timeout=60, requires_body=true
+
+# > 菜鸟裹裹_搜索框下方今日好物推荐@ddgksf2013
+response if ${url} ~= /^https?:\/\/[a-zA-Z0-9_.-]+\.cainiao\.com\/gw\/mtop\.cainiao\.adkeyword/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/converted/scripts/cainiao_json.js") with tag="cainiao_json", timeout=60, requires_body=true
+
+[MITM]
+hostname = *.cainiao.com, guide-acs.m.taobao.com, acs4miniapp-inner.m.taobao.com
+

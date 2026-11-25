@@ -1,0 +1,22 @@
+#!name=同花顺去广告
+#!desc=拒绝同花顺广告/统计域名、通用广告转发接口，并过滤发现页推荐流中的广告卡片。
+#!openUrl=https://apps.apple.com/app/id303191318
+#!author=MRXOAD[https://github.com/MRXOAD]
+#!tag=去广告
+#!system=iOS, iPadOS
+#!loon_version=3.5.1(983)
+#!icon=https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/4f/6d/67/4f6d6717-989a-69ab-3da0-c92baf7506dc/AppIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/120x120bb.jpg
+
+[Rule]
+# 2026-11-24（R-Store tonghuashun.list）：纯广告与统计主机直接域名拒绝，无需 MITM。
+DOMAIN,adm.10jqka.com.cn,REJECT
+DOMAIN,stat.10jqka.com.cn,REJECT
+
+[Rewrite]
+# 通用广告转发接口（原 AdRewrite 迁出）
+request if ${url} ~= /^https?:\/\/ftapi\.10jqka\.com\.cn\/futgwapi\/api\/om\/v\d\/ad\/common\/transfer/i then reject(200)
+# 发现页推荐流广告卡片净化（R-Store tonghuashun.conf）
+response if ${url} ~= /^https?:\/\/recommend\.10jqka\.com\.cn\/app\/discover\/api\/v\d\/recommend/i then response.json.jq("if type == \"object\" and (.data | type == \"array\") then (.data |= map(select((.info.subject? // \"\") != \"ad\")) | .total = (.data | length)) else . end")
+
+[MITM]
+hostname = ftapi.10jqka.com.cn, recommend.10jqka.com.cn
