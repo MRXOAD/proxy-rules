@@ -1,16 +1,17 @@
 # proxy-rules
 
-自用脱敏版 **Loon** 与 **Mihomo (Clash Meta)** 分流规则集及 Loon 去广告/增强插件仓库。  
-本仓库不包含任何个人节点、订阅地址、私有域名或 Token，可直接通过 GitHub Raw（或自选镜像）引入使用。
+自用 **Loon** 与 **Mihomo (Clash Meta)** 分流规则集及自维护 Loon 去广告/增强插件仓库，可直接通过 GitHub Raw（或自选镜像）引入使用。
 
 ## 目录结构
 
 | 路径 | 数量 | 说明 |
 | --- | --- | --- |
 | `loon/rules/` | 54 份 | Loon 分流规则集（`.list`） |
-| `loon/plugins/` | 101 个插件 + 75 个脚本 | Loon 去广告与增强插件（含自维护银行/App 去广告、AdRewrite 聚合重写及可莉插件本地适配镜像） |
+| `loon/plugins/` | 55 个插件 + 44 个脚本 | 自维护 Loon 去广告与增强插件（含银行/App 专项去广告与 AdRewrite 聚合重写） |
 | `loon/converted/` | 3 个插件 + 2 个脚本 | 第三方格式转换后的 Loon 插件（菜鸟裹裹、Twitch、墨鱼去开屏 2.0） |
 | `mihomo/rules/` | 79 份 | Mihomo 规则集（`.list` / `.yaml` / `.mrs`） |
+
+> 如需可莉系去广告与工具插件（如 HTTPDNS 拦截、常见 App 去广告），请直接前往原作者仓库订阅：[luestr/ProxyResource](https://github.com/luestr/ProxyResource)。
 
 ## 快速引入
 
@@ -33,7 +34,8 @@ https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/rules/China.list,
 ```ini
 [Plugin]
 https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/AdRewrite.plugin, enabled=true
-https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/KeLee-Block_HTTPDNS.plugin, enabled=true
+https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/UmetripAds.plugin, enabled=true
+https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/ChinaMobileAds.plugin, enabled=true
 ```
 
 ### 2. Mihomo (Clash Meta) `rule-providers`
@@ -290,58 +292,6 @@ rule-providers:
 - [XiaomiAds.plugin](loon/plugins/XiaomiAds.plugin)
 - [iQiyiAds.plugin](loon/plugins/iQiyiAds.plugin)
 - [iReaderAds.plugin](loon/plugins/iReaderAds.plugin)
-
-</details>
-
-<details>
-<summary>Loon 可莉系镜像插件（46 个）</summary>
-
-- [KeLee-12306_remove_ads.plugin](loon/plugins/KeLee-12306_remove_ads.plugin)
-- [KeLee-Amap_remove_ads.plugin](loon/plugins/KeLee-Amap_remove_ads.plugin)
-- [KeLee-BaiduNetDisk_remove_ads.plugin](loon/plugins/KeLee-BaiduNetDisk_remove_ads.plugin)
-- [KeLee-BaiduSearchWebpage_remove_ads.plugin](loon/plugins/KeLee-BaiduSearchWebpage_remove_ads.plugin)
-- [KeLee-Bilibili_remove_ads.plugin](loon/plugins/KeLee-Bilibili_remove_ads.plugin)
-- [KeLee-BlockAdvertisers.plugin](loon/plugins/KeLee-BlockAdvertisers.plugin)
-- [KeLee-Block_HTTPDNS.plugin](loon/plugins/KeLee-Block_HTTPDNS.plugin)
-- [KeLee-CosmosPodcast_remove_ads.plugin](loon/plugins/KeLee-CosmosPodcast_remove_ads.plugin)
-- [KeLee-Damai_remove_ads.plugin](loon/plugins/KeLee-Damai_remove_ads.plugin)
-- [KeLee-Dewu_remove_ads.plugin](loon/plugins/KeLee-Dewu_remove_ads.plugin)
-- [KeLee-DingdongMaicai_remove_ads.plugin](loon/plugins/KeLee-DingdongMaicai_remove_ads.plugin)
-- [KeLee-DouBan_remove_ads.plugin](loon/plugins/KeLee-DouBan_remove_ads.plugin)
-- [KeLee-FleaMarket_remove_ads.plugin](loon/plugins/KeLee-FleaMarket_remove_ads.plugin)
-- [KeLee-Google.plugin](loon/plugins/KeLee-Google.plugin)
-- [KeLee-Himalaya_remove_ads.plugin](loon/plugins/KeLee-Himalaya_remove_ads.plugin)
-- [KeLee-JD_remove_ads.plugin](loon/plugins/KeLee-JD_remove_ads.plugin)
-- [KeLee-Jin10Data_remove_ads.plugin](loon/plugins/KeLee-Jin10Data_remove_ads.plugin)
-- [KeLee-MangoTV_remove_ads.plugin](loon/plugins/KeLee-MangoTV_remove_ads.plugin)
-- [KeLee-MrHema_remove_ads.plugin](loon/plugins/KeLee-MrHema_remove_ads.plugin)
-- [KeLee-NeteaseCloudMusic_remove_ads.plugin](loon/plugins/KeLee-NeteaseCloudMusic_remove_ads.plugin)
-- [KeLee-Node_detection_tool.plugin](loon/plugins/KeLee-Node_detection_tool.plugin)
-- [KeLee-QQMusic_remove_ads.plugin](loon/plugins/KeLee-QQMusic_remove_ads.plugin)
-- [KeLee-QQ_Redirect.plugin](loon/plugins/KeLee-QQ_Redirect.plugin)
-- [KeLee-QiDian_remove_ads.plugin](loon/plugins/KeLee-QiDian_remove_ads.plugin)
-- [KeLee-QuarkBrowser_remove_ads.plugin](loon/plugins/KeLee-QuarkBrowser_remove_ads.plugin)
-- [KeLee-QuarkScanking_remove_ads.plugin](loon/plugins/KeLee-QuarkScanking_remove_ads.plugin)
-- [KeLee-RedPaper_remove_ads.plugin](loon/plugins/KeLee-RedPaper_remove_ads.plugin)
-- [KeLee-Roborock_remove_ads.plugin](loon/plugins/KeLee-Roborock_remove_ads.plugin)
-- [KeLee-Script-Hub.plugin](loon/plugins/KeLee-Script-Hub.plugin)
-- [KeLee-Snowball_remove_ads.plugin](loon/plugins/KeLee-Snowball_remove_ads.plugin)
-- [KeLee-SodaMusic_remove_ads.plugin](loon/plugins/KeLee-SodaMusic_remove_ads.plugin)
-- [KeLee-Spotify_remove_ads.plugin](loon/plugins/KeLee-Spotify_remove_ads.plugin)
-- [KeLee-TaobaoTravel_remove_ads.plugin](loon/plugins/KeLee-TaobaoTravel_remove_ads.plugin)
-- [KeLee-Taobao_remove_ads.plugin](loon/plugins/KeLee-Taobao_remove_ads.plugin)
-- [KeLee-Tieba_remove_ads.plugin](loon/plugins/KeLee-Tieba_remove_ads.plugin)
-- [KeLee-WARP_Node_Query.plugin](loon/plugins/KeLee-WARP_Node_Query.plugin)
-- [KeLee-Weibo_remove_ads.plugin](loon/plugins/KeLee-Weibo_remove_ads.plugin)
-- [KeLee-Weixin_Official_Accounts_remove_ads.plugin](loon/plugins/KeLee-Weixin_Official_Accounts_remove_ads.plugin)
-- [KeLee-Weixin_external_links_unlock.plugin](loon/plugins/KeLee-Weixin_external_links_unlock.plugin)
-- [KeLee-XiaomiSpeaker_remove_ads.plugin](loon/plugins/KeLee-XiaomiSpeaker_remove_ads.plugin)
-- [KeLee-YouKu_Video_remove_ads.plugin](loon/plugins/KeLee-YouKu_Video_remove_ads.plugin)
-- [KeLee-YouTube_remove_ads.plugin](loon/plugins/KeLee-YouTube_remove_ads.plugin)
-- [KeLee-Zhihu_remove_ads.plugin](loon/plugins/KeLee-Zhihu_remove_ads.plugin)
-- [KeLee-iMaiCai_remove_ads.plugin](loon/plugins/KeLee-iMaiCai_remove_ads.plugin)
-- [KeLee-mobileClouds_remove_ads.plugin](loon/plugins/KeLee-mobileClouds_remove_ads.plugin)
-- [KeLee-smzdm_remove_ads.plugin](loon/plugins/KeLee-smzdm_remove_ads.plugin)
 
 </details>
 

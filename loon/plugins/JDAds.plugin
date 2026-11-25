@@ -66,8 +66,8 @@ request if ${url} ~= /^https?:\/\/ms\.jr\.jd\.com\/gw\/generic\/base\/(?:new)?na
 request if ${url} ~= /^https?:\/\/(?:bdsp-x|dsp-x)\.jd\.com\/adx\//i then reject_dict(200)
 
 [Script]
-response if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?(?:[^#]*&)?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start(?:up)?|welcomeHome)(?:&|$)/i then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/KeLee-JD_remove_ads.js") with tag="移除京东广告", requires_body=true
-response if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action(?:\?(?![^#]*[?&]functionId=|functionId=)[^#]*)?$/i && ${request.method} == "POST" then script("https://raw.githubusercontent.com/MRXOAD/proxy-rules/main/loon/plugins/KeLee-JD_remove_ads.js", "encoded-splash") with tag="京东新版开屏", requires_body=true, timeout=10
+response if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?(?:[^#]*&)?functionId=(?:deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start(?:up)?|welcomeHome)(?:&|$)/i then script("https://kelee.one/Resource/JavaScript/JD/JD_remove_ads.js") with tag="移除京东广告", requires_body=true
+response if ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action(?:\?(?![^#]*[?&]functionId=|functionId=)[^#]*)?$/i && ${request.method} == "POST" then script("https://kelee.one/Resource/JavaScript/JD/JD_remove_ads.js", "encoded-splash") with tag="京东新版开屏", requires_body=true, timeout=10
 
 [MITM]
 hostname = api.m.jd.com, api.smart.jd.com, jdread-api.jd.com, lop-proxy.jd.com, m.360buyimg.com, storage.360buyimg.com, img0.360buyimg.com, img1.360buyimg.com, img2.360buyimg.com, storage.jd.com, ms.jr.jd.com, bdsp-x.jd.com, dsp-x.jd.com
