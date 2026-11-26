@@ -1,30 +1,12 @@
-<p align="center">
+<p>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.png" />
     <source media="(prefers-color-scheme: light)" srcset="assets/banner-light.png" />
-    <img alt="proxy-rules — Loon & Mihomo 分流规则集与去广告插件" src="assets/banner-dark.png" width="100%" />
+    <img alt="proxy-rules" src="assets/banner-dark.png" width="100%" />
   </picture>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Loon_Rules-54-10B981?style=flat-square" alt="Loon Rules" />
-  <img src="https://img.shields.io/badge/Loon_Plugins-58-38BDF8?style=flat-square" alt="Loon Plugins" />
-  <img src="https://img.shields.io/badge/Mihomo_Rules-79-10B981?style=flat-square" alt="Mihomo Rules" />
-  <img src="https://img.shields.io/github/last-commit/MRXOAD/proxy-rules?style=flat-square&label=Updated&color=64748B" alt="Updated" />
-</p>
-
-<p align="center">
-  自用 <strong>Loon</strong> 与 <strong>Mihomo (Clash Meta)</strong> 分流规则集及自维护 Loon 去广告/增强插件仓库，可直接通过 GitHub Raw（或自选镜像）引入使用。
-</p>
-
-<p align="center">
-  <a href="#目录结构">目录结构</a> ·
-  <a href="#快速引入">快速引入</a> ·
-  <a href="#规则与插件清单">完整清单</a> ·
-  <a href="#致谢与上游来源">致谢上游</a>
-</p>
-
----
+自用 **Loon** 与 **Mihomo (Clash Meta)** 分流规则集及自维护 Loon 去广告/增强插件仓库，可直接通过 GitHub Raw（或自选镜像）引入使用。
 
 ## 目录结构
 
